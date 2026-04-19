@@ -1,0 +1,3118 @@
+{
+  "version": 1,
+  "generatedAt": "2026-04-16T16:05:35.636Z",
+  "source": {
+    "objectTree": "data/aps/showcase/raw/objectTree.json.gz",
+    "properties": "data/aps/showcase/raw/properties.json.gz"
+  },
+  "counts": {
+    "totalNodes": 12867,
+    "leafNodes": 12063,
+    "quantifiableLeafNodes": 7951
+  },
+  "quantityCoverage": {
+    "length": 4967,
+    "area": 1659,
+    "volume": 2775,
+    "width": 2594,
+    "height": 2239,
+    "thickness": 1724,
+    "perimeter": 275
+  },
+  "quantityUnits": {
+    "length": "m",
+    "area": "m^2",
+    "volume": "m^3",
+    "width": "m",
+    "height": "m",
+    "thickness": "m",
+    "perimeter": "m"
+  },
+  "facets": {
+    "kinds": [
+      {
+        "value": "instance",
+        "count": 10314
+      },
+      {
+        "value": "subcomponent",
+        "count": 1641
+      },
+      {
+        "value": "direct-instance",
+        "count": 108
+      }
+    ],
+    "categories": [
+      {
+        "value": "Walls",
+        "count": 2189
+      },
+      {
+        "value": "Ducts",
+        "count": 2098
+      },
+      {
+        "value": "Duct Fittings",
+        "count": 1953
+      },
+      {
+        "value": "Supports",
+        "count": 1150
+      },
+      {
+        "value": "Structural Framing",
+        "count": 942
+      },
+      {
+        "value": "Air Terminals",
+        "count": 509
+      },
+      {
+        "value": "Lighting Fixtures",
+        "count": 446
+      },
+      {
+        "value": "Specialty Equipment",
+        "count": 264
+      },
+      {
+        "value": "Wall Sweeps",
+        "count": 249
+      },
+      {
+        "value": "Windows",
+        "count": 234
+      },
+      {
+        "value": "Floors",
+        "count": 203
+      },
+      {
+        "value": "Casework",
+        "count": 156
+      },
+      {
+        "value": "Furniture",
+        "count": 146
+      },
+      {
+        "value": "Doors",
+        "count": 126
+      },
+      {
+        "value": "Handrails",
+        "count": 121
+      },
+      {
+        "value": "Columns",
+        "count": 118
+      },
+      {
+        "value": "Plumbing Fixtures",
+        "count": 113
+      },
+      {
+        "value": "Planting",
+        "count": 110
+      },
+      {
+        "value": "Top Rails",
+        "count": 91
+      },
+      {
+        "value": "Structural Foundations",
+        "count": 77
+      },
+      {
+        "value": "Site",
+        "count": 75
+      },
+      {
+        "value": "Ceilings",
+        "count": 68
+      },
+      {
+        "value": "Railings",
+        "count": 61
+      },
+      {
+        "value": "Slab Edges",
+        "count": 59
+      },
+      {
+        "value": "Structural Columns",
+        "count": 54
+      },
+      {
+        "value": "Generic Models",
+        "count": 44
+      },
+      {
+        "value": "Runs",
+        "count": 43
+      },
+      {
+        "value": "Lines",
+        "count": 40
+      },
+      {
+        "value": "Structural Connections",
+        "count": 40
+      },
+      {
+        "value": "<Room Separation>",
+        "count": 38
+      },
+      {
+        "value": "Mechanical Equipment",
+        "count": 37
+      },
+      {
+        "value": "Flex Ducts",
+        "count": 31
+      },
+      {
+        "value": "Parts",
+        "count": 28
+      },
+      {
+        "value": "Stairs",
+        "count": 27
+      },
+      {
+        "value": "Food Service Equipment",
+        "count": 26
+      },
+      {
+        "value": "Parking",
+        "count": 20
+      },
+      {
+        "value": "Roofs",
+        "count": 20
+      },
+      {
+        "value": "Landings",
+        "count": 17
+      },
+      {
+        "value": "Structural Rebar",
+        "count": 14
+      },
+      {
+        "value": "Entourage",
+        "count": 10
+      },
+      {
+        "value": "Hardscape",
+        "count": 10
+      },
+      {
+        "value": "<Space Separation>",
+        "count": 2
+      },
+      {
+        "value": "Ramps",
+        "count": 2
+      },
+      {
+        "value": "Vertical Circulation",
+        "count": 2
+      }
+    ],
+    "families": [
+      {
+        "value": "Round Duct",
+        "count": 2090
+      },
+      {
+        "value": "Round Elbow",
+        "count": 1564
+      },
+      {
+        "value": "Curtain Wall",
+        "count": 1110
+      },
+      {
+        "value": "Basic Wall",
+        "count": 1079
+      },
+      {
+        "value": "Support - Steel Bar",
+        "count": 930
+      },
+      {
+        "value": "K-Series Bar Joist-Angle Web",
+        "count": 474
+      },
+      {
+        "value": "W Shapes",
+        "count": 394
+      },
+      {
+        "value": "Supply Grille - Double Deflection - Curve Face Rectangular Neck",
+        "count": 266
+      },
+      {
+        "value": "Wall Sweep",
+        "count": 249
+      },
+      {
+        "value": "Round Endcap",
+        "count": 206
+      },
+      {
+        "value": "Floor",
+        "count": 203
+      },
+      {
+        "value": "Stringer",
+        "count": 164
+      },
+      {
+        "value": "Return Grille - Double Deflection - Curve Face Rectangular Neck",
+        "count": 138
+      },
+      {
+        "value": "Window-Sliding-Double",
+        "count": 128
+      },
+      {
+        "value": "Handrail Type",
+        "count": 121
+      },
+      {
+        "value": "Round Tee",
+        "count": 120
+      },
+      {
+        "value": "Rectangular Column (Off Center)",
+        "count": 108
+      },
+      {
+        "value": "Door-Passage-Single-Flush",
+        "count": 105
+      },
+      {
+        "value": "Kitchenette - Medium",
+        "count": 105
+      },
+      {
+        "value": "Table-Dining Round w Chairs",
+        "count": 102
+      },
+      {
+        "value": "RPC Shrub",
+        "count": 100
+      },
+      {
+        "value": "Top Rail Type",
+        "count": 91
+      },
+      {
+        "value": "Pendant-Dome",
+        "count": 86
+      },
+      {
+        "value": "Recessed Lamp - Round - LED",
+        "count": 82
+      },
+      {
+        "value": "Recessed Lamp - Linear - LED",
+        "count": 77
+      },
+      {
+        "value": "Wall Lamp - Industrial",
+        "count": 74
+      },
+      {
+        "value": "Compound Ceiling",
+        "count": 68
+      },
+      {
+        "value": "Railing",
+        "count": 61
+      },
+      {
+        "value": "Window-Fixed",
+        "count": 60
+      },
+      {
+        "value": "Slab Edge",
+        "count": 59
+      },
+      {
+        "value": "Downlight - Under Cabinet",
+        "count": 57
+      },
+      {
+        "value": "SFD_Round",
+        "count": 51
+      },
+      {
+        "value": "Support",
+        "count": 50
+      },
+      {
+        "value": "Sculpture",
+        "count": 49
+      },
+      {
+        "value": "Upper Cabinet-Double Door-Short-Wall",
+        "count": 42
+      },
+      {
+        "value": "Upper Cabinet-Double Door-Wall",
+        "count": 42
+      },
+      {
+        "value": "Non-Monolithic Run",
+        "count": 40
+      },
+      {
+        "value": "SCN_Embed",
+        "count": 40
+      },
+      {
+        "value": "W Shapes-Column",
+        "count": 40
+      },
+      {
+        "value": "Air Terminal-Exhaust Cap-FB",
+        "count": 37
+      },
+      {
+        "value": "Air Terminal-Supply Cap-FB",
+        "count": 37
+      },
+      {
+        "value": "HeatRecoveryUnit",
+        "count": 37
+      },
+      {
+        "value": "Mirror",
+        "count": 36
+      },
+      {
+        "value": "Concrete-Rectangular Beam",
+        "count": 35
+      },
+      {
+        "value": "Rectangular to Round Transition - Angle",
+        "count": 32
+      },
+      {
+        "value": "Flex Duct Round",
+        "count": 31
+      },
+      {
+        "value": "Sink Vanity-Round",
+        "count": 31
+      },
+      {
+        "value": "Supply Diffuser - Square - Hosted",
+        "count": 28
+      },
+      {
+        "value": "Window-Double-Hung",
+        "count": 27
+      },
+      {
+        "value": "SF_Steel L Angle",
+        "count": 25
+      },
+      {
+        "value": "Assembled Stair",
+        "count": 23
+      },
+      {
+        "value": "Round Transition - Angle",
+        "count": 22
+      },
+      {
+        "value": "Closet Shelf and Pole",
+        "count": 21
+      },
+      {
+        "value": "Toilet-Domestic-3D",
+        "count": 21
+      },
+      {
+        "value": "Vanity Cabinet-Double Door & 4 Drawer",
+        "count": 21
+      },
+      {
+        "value": "Washer_Dryer_Combo",
+        "count": 21
+      },
+      {
+        "value": "Basic Roof",
+        "count": 20
+      },
+      {
+        "value": "Shelving",
+        "count": 20
+      },
+      {
+        "value": "Parking Space",
+        "count": 18
+      },
+      {
+        "value": "Non-Monolithic Landing",
+        "count": 17
+      },
+      {
+        "value": "AC_Bandstand Canopy",
+        "count": 16
+      },
+      {
+        "value": "Balcony Wall Brace",
+        "count": 16
+      },
+      {
+        "value": "Counter Top",
+        "count": 16
+      },
+      {
+        "value": "Lobby Chandelier",
+        "count": 16
+      },
+      {
+        "value": "Shelf - Rod Suspended",
+        "count": 16
+      },
+      {
+        "value": "Grab Bar",
+        "count": 15
+      },
+      {
+        "value": "Sink-Wall-Barrier Free-3D",
+        "count": 15
+      },
+      {
+        "value": "Toilet-Commercial-Wall-3D",
+        "count": 15
+      },
+      {
+        "value": "Elevator Door-Center",
+        "count": 14
+      },
+      {
+        "value": "Rebar Bar",
+        "count": 14
+      },
+      {
+        "value": "Wall Lamp - Bracket",
+        "count": 14
+      },
+      {
+        "value": "Bollard Light",
+        "count": 13
+      },
+      {
+        "value": "Concrete-Rectangular-Column",
+        "count": 13
+      },
+      {
+        "value": "Door-Passage-Single-Two_Lite",
+        "count": 13
+      },
+      {
+        "value": "SFD_Pile_Cap_Rectangle",
+        "count": 13
+      },
+      {
+        "value": "Window-Fixed-Transom",
+        "count": 12
+      },
+      {
+        "value": "Shower Stall - Rectangular",
+        "count": 11
+      },
+      {
+        "value": "Vanity Counter Top w Round Sink Hole",
+        "count": 11
+      },
+      {
+        "value": "Pendant Light - Hemisphere",
+        "count": 10
+      },
+      {
+        "value": "Planter Box",
+        "count": 10
+      },
+      {
+        "value": "Shower Stall with Seat - Rectangular",
+        "count": 10
+      },
+      {
+        "value": "Tree - Honey-Locust",
+        "count": 10
+      },
+      {
+        "value": "Tree Grate",
+        "count": 10
+      },
+      {
+        "value": "Vanity Counter Top w 2 Round Sink Holes",
+        "count": 10
+      },
+      {
+        "value": "Downlight - Round - LED",
+        "count": 9
+      },
+      {
+        "value": "Tall Cabinet-Double Door w Glass",
+        "count": 9
+      },
+      {
+        "value": "Wall Foundation",
+        "count": 9
+      },
+      {
+        "value": "Downspout",
+        "count": 8
+      },
+      {
+        "value": "LH-Series Bar Joist",
+        "count": 8
+      },
+      {
+        "value": "Rectangular Duct",
+        "count": 8
+      },
+      {
+        "value": "Scupper",
+        "count": 8
+      },
+      {
+        "value": "Model Text",
+        "count": 7
+      },
+      {
+        "value": "Potted Tree",
+        "count": 7
+      },
+      {
+        "value": "Banquette - Single",
+        "count": 6
+      },
+      {
+        "value": "C Shapes",
+        "count": 6
+      },
+      {
+        "value": "Carriage",
+        "count": 6
+      },
+      {
+        "value": "Pergola Modern",
+        "count": 6
+      },
+      {
+        "value": "RPC Female",
+        "count": 6
+      },
+      {
+        "value": "Park Bench",
+        "count": 5
+      },
+      {
+        "value": "Shelf Unit",
+        "count": 5
+      },
+      {
+        "value": "Table-Rectangular",
+        "count": 5
+      },
+      {
+        "value": "Trash Chute",
+        "count": 5
+      },
+      {
+        "value": "Twist Waste",
+        "count": 5
+      },
+      {
+        "value": "Window-Double-Hung-Double",
+        "count": 5
+      },
+      {
+        "value": "Corinthian Column Schematic (with Pedestal)",
+        "count": 4
+      },
+      {
+        "value": "Downlight - Rectangle - LED",
+        "count": 4
+      },
+      {
+        "value": "Foundation Slab",
+        "count": 4
+      },
+      {
+        "value": "Ladder",
+        "count": 4
+      },
+      {
+        "value": "Pergola Post",
+        "count": 4
+      },
+      {
+        "value": "Rectangular Endcap",
+        "count": 4
+      },
+      {
+        "value": "RPC Male",
+        "count": 4
+      },
+      {
+        "value": "Sconce Light - Uplight",
+        "count": 4
+      },
+      {
+        "value": "Trash Can",
+        "count": 4
+      },
+      {
+        "value": "TrashContainer",
+        "count": 4
+      },
+      {
+        "value": "Cast-In-Place Stair",
+        "count": 3
+      },
+      {
+        "value": "Door-Passage-Double-Flush",
+        "count": 3
+      },
+      {
+        "value": "Monolithic Run",
+        "count": 3
+      },
+      {
+        "value": "Plumb_Floor Sink",
+        "count": 3
+      },
+      {
+        "value": "Rectangular Elbow - Mitered",
+        "count": 3
+      },
+      {
+        "value": "Banquette - Double",
+        "count": 2
+      },
+      {
+        "value": "Base Cabinet-Double Door & 1 Drawer",
+        "count": 2
+      },
+      {
+        "value": "Chair-Kinder",
+        "count": 2
+      },
+      {
+        "value": "Counter Top-Island",
+        "count": 2
+      },
+      {
+        "value": "Direction Arrows - Straight",
+        "count": 2
+      },
+      {
+        "value": "Door-Passage-Single-Full_Lite",
+        "count": 2
+      },
+      {
+        "value": "Elevator-Hydraulic",
+        "count": 2
+      },
+      {
+        "value": "Hood_wPSP",
+        "count": 2
+      },
+      {
+        "value": "Parking Space - ADA",
+        "count": 2
+      },
+      {
+        "value": "Parking Symbol - ADA",
+        "count": 2
+      },
+      {
+        "value": "Ramp",
+        "count": 2
+      },
+      {
+        "value": "Rectangular Tee",
+        "count": 2
+      },
+      {
+        "value": "Return Grille - Perforated - Rectangular Face Rectangular Neck",
+        "count": 2
+      },
+      {
+        "value": "Round Column",
+        "count": 2
+      },
+      {
+        "value": "Soap Dispenser",
+        "count": 2
+      },
+      {
+        "value": "Table - 4 Leg",
+        "count": 2
+      },
+      {
+        "value": "Window-Louvers",
+        "count": 2
+      },
+      {
+        "value": "Bed-Shaker",
+        "count": 1
+      },
+      {
+        "value": "Broiler-Salamander",
+        "count": 1
+      },
+      {
+        "value": "Cash Register_Touch Screen_Generic",
+        "count": 1
+      },
+      {
+        "value": "Changing Station",
+        "count": 1
+      },
+      {
+        "value": "Counter Top-L Shaped",
+        "count": 1
+      },
+      {
+        "value": "Dispenser-Sanitary Napkin",
+        "count": 1
+      },
+      {
+        "value": "Dispenser-Towel-Tall",
+        "count": 1
+      },
+      {
+        "value": "Door-Exterior-Revolving-Full Glass-Metal",
+        "count": 1
+      },
+      {
+        "value": "Door-Overhead-Rolling",
+        "count": 1
+      },
+      {
+        "value": "Door-Passage-Single-Flush-Dbl_Acting",
+        "count": 1
+      },
+      {
+        "value": "Faucet_Combo",
+        "count": 1
+      },
+      {
+        "value": "Faucet_Swing",
+        "count": 1
+      },
+      {
+        "value": "Freezer-Dbl Door",
+        "count": 1
+      },
+      {
+        "value": "Fryer",
+        "count": 1
+      },
+      {
+        "value": "Griddle-Smooth",
+        "count": 1
+      },
+      {
+        "value": "Hand Sink",
+        "count": 1
+      },
+      {
+        "value": "HSS-Hollow Structural Section-Column",
+        "count": 1
+      },
+      {
+        "value": "Merchandiser-Dairy",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2071821]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2071834]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2071903]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2071904]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2071907]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2071908]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2071911]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2071912]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2071915]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2071916]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2071919]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2071920]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2071923]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2071924]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2089005]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2089061]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2090258]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2090283]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2091694]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2091695]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2091771]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2091772]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2091848]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2091849]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2093088]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2093120]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2095171]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2095172]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2095239]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2095240]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2095308]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2095309]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2095377]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2095378]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2100657]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2100683]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2101110]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2101111]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2103880]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2103905]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2177846]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2177847]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2285524]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2285526]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2285528]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2285530]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2285532]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2286418]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2286480]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2286486]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2286496]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2286501]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2286506]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2286511]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2286516]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2286521]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2286599]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2286605]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2286611]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2286652]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2286653]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2286654]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2286655]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2409674]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2409750]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2409871]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2409994]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2410337]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2410423]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2410590]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2449511]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [2475048]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [604816]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [604872]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [827934]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [828035]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [828140]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [828394]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [829696]",
+        "count": 1
+      },
+      {
+        "value": "Model Lines [829840]",
+        "count": 1
+      },
+      {
+        "value": "Mop Sink Faucet",
+        "count": 1
+      },
+      {
+        "value": "Mop Sink_Rect",
+        "count": 1
+      },
+      {
+        "value": "Motion_Towel_Dispenser",
+        "count": 1
+      },
+      {
+        "value": "Oven-Pizza",
+        "count": 1
+      },
+      {
+        "value": "Part [1627200]",
+        "count": 1
+      },
+      {
+        "value": "Part [1643381]",
+        "count": 1
+      },
+      {
+        "value": "Part [1643382]",
+        "count": 1
+      },
+      {
+        "value": "Part [1643383]",
+        "count": 1
+      },
+      {
+        "value": "Part [1644033]",
+        "count": 1
+      },
+      {
+        "value": "Part [1644034]",
+        "count": 1
+      },
+      {
+        "value": "Part [1644035]",
+        "count": 1
+      },
+      {
+        "value": "Part [1644119]",
+        "count": 1
+      },
+      {
+        "value": "Part [1644120]",
+        "count": 1
+      },
+      {
+        "value": "Part [1644121]",
+        "count": 1
+      },
+      {
+        "value": "Part [1644205]",
+        "count": 1
+      },
+      {
+        "value": "Part [1644206]",
+        "count": 1
+      },
+      {
+        "value": "Part [1644207]",
+        "count": 1
+      },
+      {
+        "value": "Part [702734]",
+        "count": 1
+      },
+      {
+        "value": "Part [702735]",
+        "count": 1
+      },
+      {
+        "value": "Part [882552]",
+        "count": 1
+      },
+      {
+        "value": "Part [882553]",
+        "count": 1
+      },
+      {
+        "value": "Part [882554]",
+        "count": 1
+      },
+      {
+        "value": "Part [882570]",
+        "count": 1
+      },
+      {
+        "value": "Part [882571]",
+        "count": 1
+      },
+      {
+        "value": "Part [882572]",
+        "count": 1
+      },
+      {
+        "value": "Part [882588]",
+        "count": 1
+      },
+      {
+        "value": "Part [882589]",
+        "count": 1
+      },
+      {
+        "value": "Part [882590]",
+        "count": 1
+      },
+      {
+        "value": "Part [882671]",
+        "count": 1
+      },
+      {
+        "value": "Part [882672]",
+        "count": 1
+      },
+      {
+        "value": "Part [882673]",
+        "count": 1
+      },
+      {
+        "value": "Part [882749]",
+        "count": 1
+      },
+      {
+        "value": "Range-4 Burner",
+        "count": 1
+      },
+      {
+        "value": "Refrig Prep",
+        "count": 1
+      },
+      {
+        "value": "Refrig_Base_wDrawers",
+        "count": 1
+      },
+      {
+        "value": "Refrigerator-Single",
+        "count": 1
+      },
+      {
+        "value": "Residential Lobby Stair Landing Support",
+        "count": 1
+      },
+      {
+        "value": "Sink-3 Basin",
+        "count": 1
+      },
+      {
+        "value": "Sink-Produce",
+        "count": 1
+      },
+      {
+        "value": "Supply Diffuser with Plenum - Linear Slot - Hosted",
+        "count": 1
+      },
+      {
+        "value": "Table - 6 Leg",
+        "count": 1
+      },
+      {
+        "value": "Table-Trio End",
+        "count": 1
+      },
+      {
+        "value": "TableWithUmbrella",
+        "count": 1
+      },
+      {
+        "value": "Trash Chute Roof Cap",
+        "count": 1
+      },
+      {
+        "value": "Vending - Soda",
+        "count": 1
+      }
+    ],
+    "types": [
+      {
+        "value": "Tees",
+        "count": 2068
+      },
+      {
+        "value": "1.5 D",
+        "count": 1476
+      },
+      {
+        "value": "2'-8\" Picket",
+        "count": 930
+      },
+      {
+        "value": "16x4 Connection 8 Diameter Duct",
+        "count": 404
+      },
+      {
+        "value": "_Not Defined",
+        "count": 375
+      },
+      {
+        "value": "Glazing Wall - Stair",
+        "count": 370
+      },
+      {
+        "value": "16K6",
+        "count": 339
+      },
+      {
+        "value": "Standard",
+        "count": 339
+      },
+      {
+        "value": "W18x55",
+        "count": 212
+      },
+      {
+        "value": "Interior - 4 7/8\" Partition (NR)",
+        "count": 186
+      },
+      {
+        "value": "_Stringer - 1/4\" Plate",
+        "count": 153
+      },
+      {
+        "value": "50\" x 60\"",
+        "count": 128
+      },
+      {
+        "value": "Base_Simple",
+        "count": 126
+      },
+      {
+        "value": "Block 41 Storefront",
+        "count": 110
+      },
+      {
+        "value": "Chase - GWB & Metal Stud 4 1/4\"",
+        "count": 106
+      },
+      {
+        "value": "Crown_Flat",
+        "count": 105
+      },
+      {
+        "value": "Kitchenette - Medium",
+        "count": 105
+      },
+      {
+        "value": "Chase - GWB & Metal Stud 3 1/8\"",
+        "count": 102
+      },
+      {
+        "value": "W8x10",
+        "count": 97
+      },
+      {
+        "value": "Interior - 7 1/4\" Partition (NR)",
+        "count": 95
+      },
+      {
+        "value": "24\"D x 24\"W",
+        "count": 90
+      },
+      {
+        "value": "1 D",
+        "count": 88
+      },
+      {
+        "value": "Block 37 Storefront",
+        "count": 85
+      },
+      {
+        "value": "Storefront",
+        "count": 83
+      },
+      {
+        "value": "20K6",
+        "count": 82
+      },
+      {
+        "value": "4\" Trimmed Downlight",
+        "count": 82
+      },
+      {
+        "value": "100W - 120V",
+        "count": 78
+      },
+      {
+        "value": "Planter Wall - Steel Plate 1/2\"",
+        "count": 77
+      },
+      {
+        "value": "18\" D x 15\" H",
+        "count": 74
+      },
+      {
+        "value": "4\" DIA",
+        "count": 74
+      },
+      {
+        "value": "_Size",
+        "count": 65
+      },
+      {
+        "value": "Exterior - 12 5/8\" Rainscreen w Insultation on Metal Stud",
+        "count": 61
+      },
+      {
+        "value": "36\" Diameter",
+        "count": 60
+      },
+      {
+        "value": "39\" x 76\" (Solar Wall)",
+        "count": 60
+      },
+      {
+        "value": "16K2",
+        "count": 53
+      },
+      {
+        "value": "45 Degree",
+        "count": 51
+      },
+      {
+        "value": "Block 43 Storefront",
+        "count": 51
+      },
+      {
+        "value": "36''",
+        "count": 50
+      },
+      {
+        "value": "Metal - Circular",
+        "count": 50
+      },
+      {
+        "value": "Soffit - Beam Wrap 10 1/2\" (Two Sides)",
+        "count": 48
+      },
+      {
+        "value": "24\"W x 40\"H",
+        "count": 42
+      },
+      {
+        "value": "27\"W x 28\"H",
+        "count": 42
+      },
+      {
+        "value": "60\" Diameter",
+        "count": 42
+      },
+      {
+        "value": "W12X26",
+        "count": 41
+      },
+      {
+        "value": "Soffit - Beam Wrap (Both Sides)",
+        "count": 39
+      },
+      {
+        "value": "18\" 120V",
+        "count": 38
+      },
+      {
+        "value": "5/8\" GWB on Mtl. Stud",
+        "count": 38
+      },
+      {
+        "value": "Heat Recovery Unit (HRU)",
+        "count": 37
+      },
+      {
+        "value": "Lupin 3'-10\"",
+        "count": 37
+      },
+      {
+        "value": "Block 39 Storefront",
+        "count": 36
+      },
+      {
+        "value": "_IBC-Bottom Rail Circular - 1 1/2\"",
+        "count": 34
+      },
+      {
+        "value": "_IBC-Handrail Circular - 1 1/2\" (Extension None)",
+        "count": 32
+      },
+      {
+        "value": "Soffit - Beam Wrap 9 1/4\" (One Side)",
+        "count": 32
+      },
+      {
+        "value": "19\" x 19\"",
+        "count": 31
+      },
+      {
+        "value": "Flex - Round",
+        "count": 31
+      },
+      {
+        "value": "Interior - 6 1/8\" Partition (2-hr)",
+        "count": 31
+      },
+      {
+        "value": "Pipe - Wall Mount",
+        "count": 31
+      },
+      {
+        "value": "1/4\" Tread 1\" Nosing 1/4\" Riser",
+        "count": 30
+      },
+      {
+        "value": "_IBC-Circular - 1 1/2\" (Extension None)",
+        "count": 28
+      },
+      {
+        "value": "12\" x 12\"",
+        "count": 28
+      },
+      {
+        "value": "Core - Concrete 12\"",
+        "count": 28
+      },
+      {
+        "value": "24\" Depth",
+        "count": 27
+      },
+      {
+        "value": "50\" x 98\"",
+        "count": 27
+      },
+      {
+        "value": "Exterior - 5 3/8\" Rainscreen w Insultation (for Concrete Core Walls)",
+        "count": 27
+      },
+      {
+        "value": "Finish Floor - Laminate",
+        "count": 27
+      },
+      {
+        "value": "Hydrangea 3'-9\"",
+        "count": 27
+      },
+      {
+        "value": "24''",
+        "count": 26
+      },
+      {
+        "value": "36\" x 84\" (60 MIN)",
+        "count": 25
+      },
+      {
+        "value": "72\"",
+        "count": 25
+      },
+      {
+        "value": "Finish Floor - Polished Concrete (Brown)",
+        "count": 25
+      },
+      {
+        "value": "Switchgrass 4'-6\"",
+        "count": 25
+      },
+      {
+        "value": "W18x86",
+        "count": 25
+      },
+      {
+        "value": "Chase - GWB & Metal Stud 6 5/8\"",
+        "count": 23
+      },
+      {
+        "value": "5/8\" GWB on Mtl. Furring",
+        "count": 22
+      },
+      {
+        "value": "Taps",
+        "count": 22
+      },
+      {
+        "value": "18\" Deep",
+        "count": 21
+      },
+      {
+        "value": "24\"",
+        "count": 21
+      },
+      {
+        "value": "30x30x25'",
+        "count": 21
+      },
+      {
+        "value": "36\" x 84\" (Cores)",
+        "count": 21
+      },
+      {
+        "value": "Cores - Mechanical Space",
+        "count": 21
+      },
+      {
+        "value": "Crown Molding - Cabinets",
+        "count": 21
+      },
+      {
+        "value": "Exterior - GWB on Metal Stud w Insulated Panel 8 7/8\"",
+        "count": 21
+      },
+      {
+        "value": "Party - 6 1/8\" (2-hr)",
+        "count": 21
+      },
+      {
+        "value": "Toilet-Domestic-3D",
+        "count": 21
+      },
+      {
+        "value": "36\" x 84\"",
+        "count": 20
+      },
+      {
+        "value": "Concrete Slab 4\"",
+        "count": 20
+      },
+      {
+        "value": "Road Striping",
+        "count": 20
+      },
+      {
+        "value": "_Stair Landing Plate Stringer",
+        "count": 19
+      },
+      {
+        "value": "24\" 120V",
+        "count": 19
+      },
+      {
+        "value": "9' x 18' - 90 deg",
+        "count": 18
+      },
+      {
+        "value": "Chase - GWB & Metal Stud 2 1/4\"",
+        "count": 18
+      },
+      {
+        "value": "Stair Landing Steel Plate",
+        "count": 18
+      },
+      {
+        "value": "Non-Monolithic Landing",
+        "count": 17
+      },
+      {
+        "value": "W14x109",
+        "count": 17
+      },
+      {
+        "value": "_IBC-Pipe-Plate Stringer (Extension None)",
+        "count": 16
+      },
+      {
+        "value": "24x24x25'",
+        "count": 16
+      },
+      {
+        "value": "AC_Bandstand Canopy",
+        "count": 16
+      },
+      {
+        "value": "Balcony Wall Brace",
+        "count": 16
+      },
+      {
+        "value": "CB24x24",
+        "count": 16
+      },
+      {
+        "value": "Core - Concrete 10\"",
+        "count": 16
+      },
+      {
+        "value": "Foundation - 24\" Concrete",
+        "count": 16
+      },
+      {
+        "value": "Lobby Chandelier",
+        "count": 16
+      },
+      {
+        "value": "_Stair-Metal-Plate Stringer",
+        "count": 15
+      },
+      {
+        "value": "19\" Seat Height",
+        "count": 15
+      },
+      {
+        "value": "20 D x 22 H",
+        "count": 15
+      },
+      {
+        "value": "22\" x 27\"",
+        "count": 15
+      },
+      {
+        "value": "28\" x 48\"",
+        "count": 15
+      },
+      {
+        "value": "Exterior - 10 1/4\" Rainscreen w Insultation on Metal Stud",
+        "count": 15
+      },
+      {
+        "value": "Grab Bar",
+        "count": 15
+      },
+      {
+        "value": "150W - 120V",
+        "count": 14
+      },
+      {
+        "value": "16 D x 16 H",
+        "count": 14
+      },
+      {
+        "value": "24x24x20'",
+        "count": 14
+      },
+      {
+        "value": "36\" x 84\" (180 MIN)",
+        "count": 14
+      },
+      {
+        "value": "48\" x 84\"",
+        "count": 14
+      },
+      {
+        "value": "CB24x30",
+        "count": 14
+      },
+      {
+        "value": "W10x49",
+        "count": 14
+      },
+      {
+        "value": "#6",
+        "count": 13
+      },
+      {
+        "value": "12 D x 10 H",
+        "count": 13
+      },
+      {
+        "value": "CC24x24",
+        "count": 13
+      },
+      {
+        "value": "Generic - 4\"",
+        "count": 13
+      },
+      {
+        "value": "Incandescent - 120V",
+        "count": 13
+      },
+      {
+        "value": "18\" D x 5\" H",
+        "count": 12
+      },
+      {
+        "value": "36x36x24 Pile_24",
+        "count": 12
+      },
+      {
+        "value": "50\" x 80\"",
+        "count": 12
+      },
+      {
+        "value": "72\" x 12\" x 72\"",
+        "count": 12
+      },
+      {
+        "value": "NW Concrete on Metal Deck",
+        "count": 12
+      },
+      {
+        "value": "36\" x 48\"",
+        "count": 11
+      },
+      {
+        "value": "36\"x36\" - Private",
+        "count": 11
+      },
+      {
+        "value": "48\"",
+        "count": 11
+      },
+      {
+        "value": "Stringer - 2\" Width",
+        "count": 11
+      },
+      {
+        "value": "15' Canopy",
+        "count": 10
+      },
+      {
+        "value": "18\" x 48\"",
+        "count": 10
+      },
+      {
+        "value": "48\"x36\" - Private",
+        "count": 10
+      },
+      {
+        "value": "54\" x 48\"",
+        "count": 10
+      },
+      {
+        "value": "Core - Concrete 18\"",
+        "count": 10
+      },
+      {
+        "value": "Finish Floor - Polished Concrete (Grey)",
+        "count": 10
+      },
+      {
+        "value": "Prairie Dropseed 5'-0\"",
+        "count": 10
+      },
+      {
+        "value": "Roof - Planting Bed",
+        "count": 10
+      },
+      {
+        "value": "Tree Grate",
+        "count": 10
+      },
+      {
+        "value": "W16X26",
+        "count": 10
+      },
+      {
+        "value": "30\"",
+        "count": 9
+      },
+      {
+        "value": "Bearing Footing - 36\"x18\"",
+        "count": 9
+      },
+      {
+        "value": "Bleacher Seating",
+        "count": 9
+      },
+      {
+        "value": "Interior - 8 1/2\" Partition (2-hr)",
+        "count": 9
+      },
+      {
+        "value": "LED15FM12-W120",
+        "count": 9
+      },
+      {
+        "value": "Retaining - Split Face CMU",
+        "count": 9
+      },
+      {
+        "value": "Soffit - Beam Wrap Large (Both Sides)",
+        "count": 9
+      },
+      {
+        "value": "Solar Wall (Multi-Level)",
+        "count": 9
+      },
+      {
+        "value": "Solar Wall (Parapet)",
+        "count": 9
+      },
+      {
+        "value": "_Balcony C Channel",
+        "count": 8
+      },
+      {
+        "value": "_IBC-Bottom Rail Circular - 1 1/2\" (Guardrail)",
+        "count": 8
+      },
+      {
+        "value": "_IBC-Circular - 1 1/2\" (Guardrail)",
+        "count": 8
+      },
+      {
+        "value": "_IBC-Handrail Circular - 1 1/2\"  (Guardrail)",
+        "count": 8
+      },
+      {
+        "value": "_IBC-Pipe-Plate Stringer (Guardrail)",
+        "count": 8
+      },
+      {
+        "value": "12\"W x 9\"H",
+        "count": 8
+      },
+      {
+        "value": "18LH04",
+        "count": 8
+      },
+      {
+        "value": "36\" x 89\" (90 MIN)",
+        "count": 8
+      },
+      {
+        "value": "96\" x 12\" x 84\"",
+        "count": 8
+      },
+      {
+        "value": "Downspout",
+        "count": 8
+      },
+      {
+        "value": "Handrail - Balcony",
+        "count": 8
+      },
+      {
+        "value": "Insulation on Metal Deck - EPDM",
+        "count": 8
+      },
+      {
+        "value": "Mitered Elbows / Taps",
+        "count": 8
+      },
+      {
+        "value": "Rectangular - 2\" x 2\"",
+        "count": 8
+      },
+      {
+        "value": "TPO Roof, 5\" Min. Rigid Insulation w 5/8\" Protection Board",
+        "count": 8
+      },
+      {
+        "value": "18 D x 16 H",
+        "count": 7
+      },
+      {
+        "value": "96\"L x 20\"W x 24\"H",
+        "count": 7
+      },
+      {
+        "value": "Potted Tree",
+        "count": 7
+      },
+      {
+        "value": "Roof - Decking",
+        "count": 7
+      },
+      {
+        "value": "W8x31",
+        "count": 7
+      },
+      {
+        "value": "10\" Trebuchet MS",
+        "count": 6
+      },
+      {
+        "value": "150W - 120V 12\" Drop",
+        "count": 6
+      },
+      {
+        "value": "18\" x 72\"",
+        "count": 6
+      },
+      {
+        "value": "24\"D x 22\"W",
+        "count": 6
+      },
+      {
+        "value": "36\" x 84\" (45 MIN)",
+        "count": 6
+      },
+      {
+        "value": "Banquette - Single",
+        "count": 6
+      },
+      {
+        "value": "Block 39 Pilaster",
+        "count": 6
+      },
+      {
+        "value": "Bottom Rail Circular - 1 1/2\" (Spiral)",
+        "count": 6
+      },
+      {
+        "value": "C8X11.5",
+        "count": 6
+      },
+      {
+        "value": "Circular - 1 1/2\" (Spiral)",
+        "count": 6
+      },
+      {
+        "value": "Furring - GWB & Channels 1 7/8\"",
+        "count": 6
+      },
+      {
+        "value": "Pergola",
+        "count": 6
+      },
+      {
+        "value": "Roof - Porcelain Float Deck 2'x2'",
+        "count": 6
+      },
+      {
+        "value": "1 1/2 Metal Roof Deck NO Concrete",
+        "count": 5
+      },
+      {
+        "value": "36\" x 84\" (90 MIN)",
+        "count": 5
+      },
+      {
+        "value": "36\" x 84\" (Roof)",
+        "count": 5
+      },
+      {
+        "value": "74\" x 98\"",
+        "count": 5
+      },
+      {
+        "value": "Interior - 5 1/2\" Partition (1-hr Smoke)",
+        "count": 5
+      },
+      {
+        "value": "Interior - CMU 8\"",
+        "count": 5
+      },
+      {
+        "value": "Roof - Turf",
+        "count": 5
+      },
+      {
+        "value": "Trash Chute",
+        "count": 5
+      },
+      {
+        "value": "Twist Waste",
+        "count": 5
+      },
+      {
+        "value": "W14X30",
+        "count": 5
+      },
+      {
+        "value": "150W - 120V 36\" Drop",
+        "count": 4
+      },
+      {
+        "value": "2\" Tread 1\" Nosing 1/4\" Riser",
+        "count": 4
+      },
+      {
+        "value": "36\" x 84\" (20 MIN)",
+        "count": 4
+      },
+      {
+        "value": "44\" x 30\"",
+        "count": 4
+      },
+      {
+        "value": "5/8\" GWB on Mtl. Stud (Window Surround)",
+        "count": 4
+      },
+      {
+        "value": "68W Rectangle",
+        "count": 4
+      },
+      {
+        "value": "Balustrade_23 w Piers",
+        "count": 4
+      },
+      {
+        "value": "Circular - 1 1/2\"",
+        "count": 4
+      },
+      {
+        "value": "Concrete - 6\"",
+        "count": 4
+      },
+      {
+        "value": "Concrete 6",
+        "count": 4
+      },
+      {
+        "value": "Coping_Core Wall - Concrete & Rainscreen",
+        "count": 4
+      },
+      {
+        "value": "Coping_Rainscreen Wall",
+        "count": 4
+      },
+      {
+        "value": "Elliptical - 1 1/2\" x 1 1/8\" (Extension Top and Bottom)",
+        "count": 4
+      },
+      {
+        "value": "Exterior - 14 5/8\" Rainscreen w Insultation on Metal Stud",
+        "count": 4
+      },
+      {
+        "value": "Exterior Soffit",
+        "count": 4
+      },
+      {
+        "value": "Flex",
+        "count": 4
+      },
+      {
+        "value": "FNDN-36",
+        "count": 4
+      },
+      {
+        "value": "Glass Panel - Bottom Fill (Extension Top and Bottom)",
+        "count": 4
+      },
+      {
+        "value": "Handrail - Pipe",
+        "count": 4
+      },
+      {
+        "value": "Interior - 4 7/8\" Partition (1-hr)",
+        "count": 4
+      },
+      {
+        "value": "Roof - Brick Border",
+        "count": 4
+      },
+      {
+        "value": "Roof - Sculpture Bed",
+        "count": 4
+      },
+      {
+        "value": "Sidewalk",
+        "count": 4
+      },
+      {
+        "value": "Solar Wall (L5)",
+        "count": 4
+      },
+      {
+        "value": "Spiral",
+        "count": 4
+      },
+      {
+        "value": "Trash Can",
+        "count": 4
+      },
+      {
+        "value": "TrashContainer",
+        "count": 4
+      },
+      {
+        "value": "_IBC-Circular - 1 1/2\" (Extension Top)",
+        "count": 3
+      },
+      {
+        "value": "_IBC-Pipe-Plate Stringer (Extension Top)",
+        "count": 3
+      },
+      {
+        "value": "2 1/2\" Tread Square Nosing No Riser",
+        "count": 3
+      },
+      {
+        "value": "24\"D x 20\"W",
+        "count": 3
+      },
+      {
+        "value": "32\"D x 24\"W",
+        "count": 3
+      },
+      {
+        "value": "34\" x 84\" (90 MIN)",
+        "count": 3
+      },
+      {
+        "value": "36\" x 96\" (Exterior)",
+        "count": 3
+      },
+      {
+        "value": "38\" x 24\"",
+        "count": 3
+      },
+      {
+        "value": "7\" max riser 11\" tread",
+        "count": 3
+      },
+      {
+        "value": "72\" x 84\"",
+        "count": 3
+      },
+      {
+        "value": "Block 37 Pilaster",
+        "count": 3
+      },
+      {
+        "value": "Carriage - 2\" Width",
+        "count": 3
+      },
+      {
+        "value": "Carriage - 24\" Width",
+        "count": 3
+      },
+      {
+        "value": "Concrete 10",
+        "count": 3
+      },
+      {
+        "value": "Concrete 12\"",
+        "count": 3
+      },
+      {
+        "value": "Concrete Slab 6\"",
+        "count": 3
+      },
+      {
+        "value": "Coping_Core Wall - Concrete",
+        "count": 3
+      },
+      {
+        "value": "Coping_Solar Wall (L5)",
+        "count": 3
+      },
+      {
+        "value": "Elliptical - 1 1/2\" x 1 1/8\" (Extension Bottom)",
+        "count": 3
+      },
+      {
+        "value": "Exterior - 13 5/8\" Rainscreen (Two Sides) w Insultation on Metal Stud",
+        "count": 3
+      },
+      {
+        "value": "Glass Panel - Bottom Fill (Extension Bottom)",
+        "count": 3
+      },
+      {
+        "value": "Hardscape - Brick Walk",
+        "count": 3
+      },
+      {
+        "value": "W30x235",
+        "count": 3
+      },
+      {
+        "value": "16x10",
+        "count": 2
+      },
+      {
+        "value": "18\"D x 18\"W",
+        "count": 2
+      },
+      {
+        "value": "20\"D x 24\"W",
+        "count": 2
+      },
+      {
+        "value": "22\" x 24\"",
+        "count": 2
+      },
+      {
+        "value": "3/4\" Nosing",
+        "count": 2
+      },
+      {
+        "value": "3500 lbs",
+        "count": 2
+      },
+      {
+        "value": "36\" x 96\"",
+        "count": 2
+      },
+      {
+        "value": "36\" x 96\" Storefront",
+        "count": 2
+      },
+      {
+        "value": "4\" Diameter (Spiral Stair Post)",
+        "count": 2
+      },
+      {
+        "value": "60 Degree",
+        "count": 2
+      },
+      {
+        "value": "72\" x 30\"",
+        "count": 2
+      },
+      {
+        "value": "Banquette - Double",
+        "count": 2
+      },
+      {
+        "value": "Brick - 8\"",
+        "count": 2
+      },
+      {
+        "value": "CB24 x51",
+        "count": 2
+      },
+      {
+        "value": "CB24x39",
+        "count": 2
+      },
+      {
+        "value": "Chair-Kinder",
+        "count": 2
+      },
+      {
+        "value": "Coping_Solar Wall Parapet (4\" High)",
+        "count": 2
+      },
+      {
+        "value": "Direction Arrow - Straight",
+        "count": 2
+      },
+      {
+        "value": "Finish Floor - Ceramic Tile (Wood)",
+        "count": 2
+      },
+      {
+        "value": "Finish Floor - Terrazo",
+        "count": 2
+      },
+      {
+        "value": "Gate",
+        "count": 2
+      },
+      {
+        "value": "Generic - 6\"",
+        "count": 2
+      },
+      {
+        "value": "Handrail - Glass Panel w Brackets",
+        "count": 2
+      },
+      {
+        "value": "Hood_wPSP",
+        "count": 2
+      },
+      {
+        "value": "Landscape - Lawn",
+        "count": 2
+      },
+      {
+        "value": "Living Wall",
+        "count": 2
+      },
+      {
+        "value": "Lobby Stair",
+        "count": 2
+      },
+      {
+        "value": "Lobby Stair Nosing",
+        "count": 2
+      },
+      {
+        "value": "Parking Symbol - ADA",
+        "count": 2
+      },
+      {
+        "value": "Partial Grate",
+        "count": 2
+      },
+      {
+        "value": "Pergola Post - Front",
+        "count": 2
+      },
+      {
+        "value": "Pergola Post - Rear",
+        "count": 2
+      },
+      {
+        "value": "Soap Dispenser",
+        "count": 2
+      },
+      {
+        "value": "Soffit - Beam Wrap 11 1/4\" (One Side)",
+        "count": 2
+      },
+      {
+        "value": "Top Rail Square 2x2",
+        "count": 2
+      },
+      {
+        "value": "W18x119",
+        "count": 2
+      },
+      {
+        "value": "_IBC-Circular - 1 1/2\" (Extension Bottom)",
+        "count": 1
+      },
+      {
+        "value": "_IBC-Circular - 1 1/2\" (Extension Top and Bottom)",
+        "count": 1
+      },
+      {
+        "value": "_IBC-Handrail Circular - 1 1/2\" (Extension Bottom)",
+        "count": 1
+      },
+      {
+        "value": "_IBC-Handrail Circular - 1 1/2\" (Extension Top and Bottom)",
+        "count": 1
+      },
+      {
+        "value": "_IBC-Pipe-Plate Stringer (Extension Bottom)",
+        "count": 1
+      },
+      {
+        "value": "_IBC-Pipe-Plate Stringer (Extension Top and Bottom)",
+        "count": 1
+      },
+      {
+        "value": "#8",
+        "count": 1
+      },
+      {
+        "value": "101\" Width",
+        "count": 1
+      },
+      {
+        "value": "16\" x 18\" x 19\" - Cash Drawer",
+        "count": 1
+      },
+      {
+        "value": "18\" Depth",
+        "count": 1
+      },
+      {
+        "value": "18\" Trebuchet MS",
+        "count": 1
+      },
+      {
+        "value": "18\"D x 24\"W",
+        "count": 1
+      },
+      {
+        "value": "2\" Tread 1\" Nosing 1/4\" Riser (Wood)",
+        "count": 1
+      },
+      {
+        "value": "20\" Diameter",
+        "count": 1
+      },
+      {
+        "value": "24\"D x 19\"W",
+        "count": 1
+      },
+      {
+        "value": "26\" x 84\"",
+        "count": 1
+      },
+      {
+        "value": "27\"",
+        "count": 1
+      },
+      {
+        "value": "28\" x 34\"",
+        "count": 1
+      },
+      {
+        "value": "3' 7 1/2\" Height",
+        "count": 1
+      },
+      {
+        "value": "3' Height",
+        "count": 1
+      },
+      {
+        "value": "3/4\" Nosing (Solid Base)",
+        "count": 1
+      },
+      {
+        "value": "30\"x22\"",
+        "count": 1
+      },
+      {
+        "value": "31\"",
+        "count": 1
+      },
+      {
+        "value": "35\" x 20\"",
+        "count": 1
+      },
+      {
+        "value": "36\"",
+        "count": 1
+      },
+      {
+        "value": "36\" x 19\"",
+        "count": 1
+      },
+      {
+        "value": "36\" x 38\"",
+        "count": 1
+      },
+      {
+        "value": "36\" x 84\" (Exterior)",
+        "count": 1
+      },
+      {
+        "value": "36x36x24 Pile_30",
+        "count": 1
+      },
+      {
+        "value": "39\" x 34\"",
+        "count": 1
+      },
+      {
+        "value": "42\" x 96\" (Exterior)",
+        "count": 1
+      },
+      {
+        "value": "42\"\"L x 20\"W x 24\"H",
+        "count": 1
+      },
+      {
+        "value": "48''",
+        "count": 1
+      },
+      {
+        "value": "48\" x 24\"",
+        "count": 1
+      },
+      {
+        "value": "48x4 1/4-8 In Inlet 2-Slot",
+        "count": 1
+      },
+      {
+        "value": "56\" x 38\"",
+        "count": 1
+      },
+      {
+        "value": "60\" x 24\"",
+        "count": 1
+      },
+      {
+        "value": "60\" x 31\"",
+        "count": 1
+      },
+      {
+        "value": "60\"L x 20\"W x 24\"H",
+        "count": 1
+      },
+      {
+        "value": "66\" x 36\"",
+        "count": 1
+      },
+      {
+        "value": "72\" Length",
+        "count": 1
+      },
+      {
+        "value": "72\"L x 24\"W x 24\"H",
+        "count": 1
+      },
+      {
+        "value": "78\" x 108\"",
+        "count": 1
+      },
+      {
+        "value": "80 Degree",
+        "count": 1
+      },
+      {
+        "value": "84\" x 30\"",
+        "count": 1
+      },
+      {
+        "value": "9' x 18' (4' Aisle)",
+        "count": 1
+      },
+      {
+        "value": "9' x 18' (8' Aisle)",
+        "count": 1
+      },
+      {
+        "value": "91\" Width",
+        "count": 1
+      },
+      {
+        "value": "Access Door",
+        "count": 1
+      },
+      {
+        "value": "Alex",
+        "count": 1
+      },
+      {
+        "value": "Balustrade_23 w Piers w End Post",
+        "count": 1
+      },
+      {
+        "value": "Beverage Dispenser",
+        "count": 1
+      },
+      {
+        "value": "Bleachers Aisle",
+        "count": 1
+      },
+      {
+        "value": "Cathy",
+        "count": 1
+      },
+      {
+        "value": "CB18x24",
+        "count": 1
+      },
+      {
+        "value": "Century 1'-10\"",
+        "count": 1
+      },
+      {
+        "value": "Circular - 1 1/2\" (Post Return)",
+        "count": 1
+      },
+      {
+        "value": "Coping_Solar Wall (Multi-Level)",
+        "count": 1
+      },
+      {
+        "value": "Coping_Solar Wall Parapet",
+        "count": 1
+      },
+      {
+        "value": "Cynthia",
+        "count": 1
+      },
+      {
+        "value": "Dispenser-Sanitary Napkin",
+        "count": 1
+      },
+      {
+        "value": "Dispenser-Towel-Tall",
+        "count": 1
+      },
+      {
+        "value": "Dwayne",
+        "count": 1
+      },
+      {
+        "value": "Elliptical - 1 1/2\" x 1 1/8\"",
+        "count": 1
+      },
+      {
+        "value": "Elliptical - 1 1/2\" x 1 1/8\" (Extension Top)",
+        "count": 1
+      },
+      {
+        "value": "Exterior - 12 5/8\" Rainscreen w Insultation on Metal Stud (Alley)",
+        "count": 1
+      },
+      {
+        "value": "Exterior - 9 7/8\" EIFS on Mtl. Stud",
+        "count": 1
+      },
+      {
+        "value": "Faucet_Combo",
+        "count": 1
+      },
+      {
+        "value": "Faucet_Swing",
+        "count": 1
+      },
+      {
+        "value": "Florence",
+        "count": 1
+      },
+      {
+        "value": "Full Grate",
+        "count": 1
+      },
+      {
+        "value": "Glass Panel - Bottom Fill",
+        "count": 1
+      },
+      {
+        "value": "Glass Panel - Bottom Fill (Extension Top)",
+        "count": 1
+      },
+      {
+        "value": "Hand Sink",
+        "count": 1
+      },
+      {
+        "value": "Handrail - Simple",
+        "count": 1
+      },
+      {
+        "value": "HSS6x6x5/8",
+        "count": 1
+      },
+      {
+        "value": "Interior - 7 1/4\" Partition (1 hr)",
+        "count": 1
+      },
+      {
+        "value": "Jay",
+        "count": 1
+      },
+      {
+        "value": "King 78\" x 83\"",
+        "count": 1
+      },
+      {
+        "value": "LaRon",
+        "count": 1
+      },
+      {
+        "value": "Lisa",
+        "count": 1
+      },
+      {
+        "value": "Metal Stud 10\" - Laminate Finish",
+        "count": 1
+      },
+      {
+        "value": "Monolithic Stair",
+        "count": 1
+      },
+      {
+        "value": "Monolithic Stair (Solid Base)",
+        "count": 1
+      },
+      {
+        "value": "Mop Sink Faucet",
+        "count": 1
+      },
+      {
+        "value": "Motion_Towel_Dispenser",
+        "count": 1
+      },
+      {
+        "value": "Raised Floor Steps",
+        "count": 1
+      },
+      {
+        "value": "Ramp (Wood)",
+        "count": 1
+      },
+      {
+        "value": "Ramp 1",
+        "count": 1
+      },
+      {
+        "value": "Refrig Prep",
+        "count": 1
+      },
+      {
+        "value": "Refrig_Base_wDrawers",
+        "count": 1
+      },
+      {
+        "value": "Residential Lobby Stair Landing Support",
+        "count": 1
+      },
+      {
+        "value": "TableWithUmbrella",
+        "count": 1
+      },
+      {
+        "value": "Tina",
+        "count": 1
+      },
+      {
+        "value": "Trash Chute Roof Cap",
+        "count": 1
+      },
+      {
+        "value": "Tree Guard",
+        "count": 1
+      },
+      {
+        "value": "W36x232",
+        "count": 1
+      },
+      {
+        "value": "YinYin",
+        "count": 1
+      }
+    ],
+    "levels": [
+      {
+        "value": "L3",
+        "count": 847
+      },
+      {
+        "value": "L4",
+        "count": 753
+      },
+      {
+        "value": "L5",
+        "count": 539
+      },
+      {
+        "value": "L2",
+        "count": 492
+      },
+      {
+        "value": "L1 - Block 37",
+        "count": 224
+      },
+      {
+        "value": "L5 TOS",
+        "count": 204
+      },
+      {
+        "value": "L4 TOS",
+        "count": 203
+      },
+      {
+        "value": "L3 TOS",
+        "count": 193
+      },
+      {
+        "value": "R2 TOS",
+        "count": 167
+      },
+      {
+        "value": "L2 TOS",
+        "count": 84
+      },
+      {
+        "value": "L1 - Block 35",
+        "count": 81
+      },
+      {
+        "value": "Green Roof Hardscape",
+        "count": 63
+      },
+      {
+        "value": "L1 - Block 43",
+        "count": 60
+      },
+      {
+        "value": "R2",
+        "count": 53
+      },
+      {
+        "value": "Parking",
+        "count": 46
+      },
+      {
+        "value": "Parapet 2",
+        "count": 37
+      },
+      {
+        "value": "R1",
+        "count": 20
+      },
+      {
+        "value": "L1_37_Med",
+        "count": 19
+      },
+      {
+        "value": "M1 TOS",
+        "count": 19
+      },
+      {
+        "value": "M1",
+        "count": 17
+      },
+      {
+        "value": "L1_35_Low",
+        "count": 12
+      },
+      {
+        "value": "Parapet",
+        "count": 9
+      },
+      {
+        "value": "Block 39 - Parapet",
+        "count": 4
+      },
+      {
+        "value": "L1_43_High",
+        "count": 4
+      }
+    ],
+    "materials": [
+      {
+        "value": "Steel",
+        "count": 920
+      },
+      {
+        "value": "Metal Stud Layer",
+        "count": 536
+      },
+      {
+        "value": "Aluminum",
+        "count": 439
+      },
+      {
+        "value": "Steel, Paint Finish, Dark Gray",
+        "count": 375
+      },
+      {
+        "value": "Metal Furring",
+        "count": 255
+      },
+      {
+        "value": "Glass",
+        "count": 250
+      },
+      {
+        "value": "Concrete, Cast-in-Place gray",
+        "count": 240
+      },
+      {
+        "value": "Aluminum Clad (Black)",
+        "count": 204
+      },
+      {
+        "value": "Aluminum Clad (Orange)",
+        "count": 176
+      },
+      {
+        "value": "Paint - White Glossy",
+        "count": 126
+      },
+      {
+        "value": "Paint - Grey Textured",
+        "count": 105
+      },
+      {
+        "value": "<By Category>",
+        "count": 88
+      },
+      {
+        "value": "Steel Rusted",
+        "count": 77
+      },
+      {
+        "value": "Concrete, Precast Smooth, Light Grey",
+        "count": 49
+      },
+      {
+        "value": "Default",
+        "count": 35
+      },
+      {
+        "value": "Cabinets",
+        "count": 21
+      },
+      {
+        "value": "Steel, Paint Finish, Ivory, Glossy",
+        "count": 21
+      },
+      {
+        "value": "Parking Stripe",
+        "count": 20
+      },
+      {
+        "value": "Metal Parapet - White",
+        "count": 18
+      },
+      {
+        "value": "Rebar, ASTM A615, Grade 60",
+        "count": 14
+      },
+      {
+        "value": "Planting Bed",
+        "count": 10
+      },
+      {
+        "value": "Tree Grate",
+        "count": 10
+      },
+      {
+        "value": "CMU, Split Face",
+        "count": 9
+      },
+      {
+        "value": "Aluminum Satin Bronze",
+        "count": 7
+      },
+      {
+        "value": "Exterior Decking",
+        "count": 7
+      },
+      {
+        "value": "Steel, Paint Finish, Black",
+        "count": 6
+      },
+      {
+        "value": "Stone Tiles",
+        "count": 6
+      },
+      {
+        "value": "Concrete Masonry Units",
+        "count": 5
+      },
+      {
+        "value": "Grass - Turf",
+        "count": 5
+      },
+      {
+        "value": "Metal Deck",
+        "count": 5
+      },
+      {
+        "value": "Asphalt, Pavement, Light Grey",
+        "count": 4
+      },
+      {
+        "value": "Bronze, Architectural",
+        "count": 4
+      },
+      {
+        "value": "Paving - Brick Border",
+        "count": 4
+      },
+      {
+        "value": "Plastic - White",
+        "count": 4
+      },
+      {
+        "value": "Sculpture Bed",
+        "count": 4
+      },
+      {
+        "value": "Wood",
+        "count": 4
+      },
+      {
+        "value": "Brick, Dark Blend, Soldier",
+        "count": 2
+      },
+      {
+        "value": "Grass",
+        "count": 2
+      },
+      {
+        "value": "Living Wall",
+        "count": 2
+      },
+      {
+        "value": "Stainless Steel, Brushed",
+        "count": 2
+      },
+      {
+        "value": "Terrazzo",
+        "count": 2
+      },
+      {
+        "value": "Steel, Chrome Plated",
+        "count": 1
+      }
+    ],
+    "activities": []
+  }
+}
