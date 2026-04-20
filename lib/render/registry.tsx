@@ -1150,7 +1150,7 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
                 <ShowcaseShellSlot
                   child={analyticsPrimary}
                   emptyLabel="Primary analysis panel."
-                  className="min-w-0 min-h-[18rem] lg:[&>*]:h-full"
+                  className="min-w-0 min-h-[18rem]"
                   onAddChart={
                     isEditable && analyticsPrimaryKey
                       ? makeAddChart(analyticsPrimaryKey)
@@ -1168,7 +1168,7 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
                 <ShowcaseShellSlot
                   child={analyticsSecondary}
                   emptyLabel="Secondary analysis panel."
-                  className="min-w-0 min-h-[18rem] lg:[&>*]:h-full"
+                  className="min-w-0 min-h-[18rem]"
                   onAddChart={
                     isEditable && analyticsSecondaryKey
                       ? makeAddChart(analyticsSecondaryKey)
@@ -1183,17 +1183,26 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
                       : undefined
                   }
                 />
+                {detailSecondary ? (
+                  <ShowcaseShellSlot
+                    child={detailSecondary}
+                    emptyLabel="Grouped summary panel."
+                    className="min-w-0 lg:min-h-[14rem]"
+                  />
+                ) : null}
               </div>
               <ShowcaseShellSlot
                 child={detailPrimary}
                 emptyLabel="Detail table or schedule."
-                className="min-w-0 lg:col-span-6 lg:min-h-[20rem]"
+                className={`min-w-0 lg:min-h-[20rem] ${detailSecondary ? "lg:col-span-12" : "lg:col-span-6"}`}
               />
-              <ShowcaseShellSlot
-                child={detailSecondary}
-                emptyLabel="Additional detail panel."
-                className="min-w-0 lg:col-span-6 lg:min-h-[20rem]"
-              />
+              {!detailSecondary ? (
+                <ShowcaseShellSlot
+                  child={detailSecondary}
+                  emptyLabel="Additional detail panel."
+                  className="min-w-0 lg:col-span-6 lg:min-h-[20rem]"
+                />
+              ) : null}
 
               {extraWidgets.map((widget, index) => (
                 <ShowcaseShellSlot
@@ -1377,6 +1386,7 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
       );
 
       const chartColor = props.color ?? "var(--chart-1)";
+      const chartHeight = props.height ?? 300;
 
       const chartConfig = {
         [valueKey]: {
@@ -1394,14 +1404,14 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
       }
 
       return (
-        <div className="flex h-full min-h-0 w-full flex-col">
+        <div className="flex min-h-0 w-full flex-col">
           {props.title && (
             <p className="text-sm font-medium mb-2">{props.title}</p>
           )}
           <ChartContainer
             config={chartConfig}
-            className="min-h-[220px] h-full w-full !aspect-auto"
-            style={{ height: "100%", minHeight: props.height ?? 220 }}
+            className="w-full !aspect-auto"
+            style={{ height: chartHeight, minHeight: chartHeight }}
           >
             <RechartsBarChart
               accessibilityLayer
@@ -1457,6 +1467,7 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
       );
 
       const chartColor = props.color ?? "var(--chart-1)";
+      const chartHeight = props.height ?? 300;
 
       const chartConfig = {
         [valueKey]: {
@@ -1474,14 +1485,14 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
       }
 
       return (
-        <div className="flex h-full min-h-0 w-full flex-col">
+        <div className="flex min-h-0 w-full flex-col">
           {props.title && (
             <p className="text-sm font-medium mb-2">{props.title}</p>
           )}
           <ChartContainer
             config={chartConfig}
-            className="min-h-[220px] h-full w-full !aspect-auto [&_svg]:overflow-visible"
-            style={{ height: "100%", minHeight: props.height ?? 220 }}
+            className="w-full !aspect-auto [&_svg]:overflow-visible"
+            style={{ height: chartHeight, minHeight: chartHeight }}
           >
             <RechartsLineChart
               accessibilityLayer
@@ -1857,6 +1868,7 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
       }
 
       const chartConfig: ChartConfig = {};
+      const chartHeight = props.height ?? 300;
       items.forEach((item, i) => {
         const name = String(item[props.nameKey] ?? `Segment ${i + 1}`);
         chartConfig[name] = {
@@ -1866,14 +1878,14 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
       });
 
       return (
-        <div className="flex h-full min-h-0 w-full flex-col">
+        <div className="flex min-h-0 w-full flex-col">
           {props.title && (
             <p className="text-sm font-medium mb-2">{props.title}</p>
           )}
           <ChartContainer
             config={chartConfig}
-            className="mx-auto min-h-[220px] h-full w-full !aspect-auto"
-            style={{ height: "100%", minHeight: props.height ?? 220 }}
+            className="mx-auto w-full !aspect-auto"
+            style={{ height: chartHeight, minHeight: chartHeight }}
           >
             <RechartsPieChart>
               <ChartTooltip content={<ChartTooltipContent />} />
