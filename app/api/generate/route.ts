@@ -103,18 +103,41 @@ export async function POST(req: Request) {
           const output = assessment.output as PromptRefinementAssessment | undefined;
           console.info("[prompt-refinement][route] assessment-result", {
             latestPrompt,
-            needsRefinement: output?.needsRefinement ?? null,
+            action: output?.action ?? null,
             reason: output?.reason ?? null,
             hasRefinementPayload: Boolean(output?.refinement),
           });
-          if (!output?.needsRefinement || !output.refinement) {
+          if (output?.action === "generate") {
             return;
           }
 
           const textId = "prompt-refinement";
-          const spec = buildPromptRefinementSpec(output.refinement, latestPrompt);
+
+          if (output?.action === "irrelevant") {
+            writer.write({ type: "text-start", id: textId });
+            writer.write({
+              type: "text-delta",
+              id: textId,
+              delta:
+                "This app is focused on APS showcase dashboards. Try a BIM prompt like 'Build a Walls dashboard with the Autodesk viewer, filters, KPIs, charts, and a schedule.'",
+            });
+            writer.write({ type: "text-end", id: textId });
+            refinementWritten = true;
+            return;
+          }
+
+          if (!output?.refinement) {
+            return;
+          }
+
+          const spec = buildPromptRefinementSpec(
+            output.refinement,
+            latestPrompt,
+            true,
+          );
           console.info("[prompt-refinement][route] writing-selector", {
             latestPrompt,
+            action: output.action,
             optionCount: output.refinement.options.length,
           });
           writer.write({ type: "text-start", id: textId });

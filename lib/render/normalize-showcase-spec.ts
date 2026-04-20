@@ -1,4 +1,8 @@
 import type { Spec } from "@json-render/react";
+import {
+  getShareSpecVersion,
+  SHARE_SPEC_VERSION,
+} from "@/lib/render/share-spec-version";
 
 type JsonLike = Record<string, unknown>;
 
@@ -1404,6 +1408,10 @@ export function normalizeShowcaseDashboardSpec(spec: Spec | null): Spec | null {
   const rootType = spec.elements[spec.root]?.type ?? null;
   if (rootType && PASSTHROUGH_ROOT_TYPES.has(rootType)) {
     return spec;
+  }
+
+  if (getShareSpecVersion(spec) === SHARE_SPEC_VERSION) {
+    return enrichShowcaseAnalysisState(spec);
   }
 
   let nextSpec = sanitizeTabNodes(ensureViewerSection(enrichShowcaseAnalysisState(spec)));

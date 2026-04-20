@@ -237,7 +237,7 @@ function AnimatedGroup({
 
 const TabsValueContext = createContext<string | null>(null);
 const EMPTY_SELECTION: number[] = [];
-const DEFAULT_VIEWER_HEIGHT = "100%";
+const DEFAULT_VIEWER_HEIGHT = "560px";
 
 function ShowcaseShellSlot({
   child,
@@ -245,12 +245,14 @@ function ShowcaseShellSlot({
   className,
   onAddChart,
   onChangeChartType,
+  forceFillChild,
 }: {
   child?: ReactNode;
   emptyLabel: string;
   className?: string;
   onAddChart?: (kind: AddChartKind) => void;
   onChangeChartType?: (type: SupportedChartType) => void;
+  forceFillChild?: boolean;
 }) {
   const [addMenuOpen, setAddMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -328,7 +330,9 @@ function ShowcaseShellSlot({
             )}
           </div>
         )}
-        {child}
+        <div className={forceFillChild ? "h-full min-h-0 [&>*]:h-full" : undefined}>
+          {child}
+        </div>
       </div>
     );
   }
@@ -725,11 +729,13 @@ function PromptRefinementChooser({
   description,
   originalPrompt,
   options,
+  allowOriginalPrompt = true,
 }: {
   title?: string | null;
   description?: string | null;
   originalPrompt: string;
   options: PromptRefinementOption[];
+  allowOriginalPrompt?: boolean | null;
 }) {
   const submitRefinement = useContext(PromptRefinementSubmitContext);
   const [selectedPrompt, setSelectedPrompt] = useState<string>(
@@ -819,14 +825,16 @@ function PromptRefinementChooser({
               "Send refined prompt"
             )}
           </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            disabled={!submitRefinement || isSubmitting}
-            onClick={() => void handleSubmit("original")}
-          >
-            Use original
-          </Button>
+          {allowOriginalPrompt && (
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={!submitRefinement || isSubmitting}
+              onClick={() => void handleSubmit("original")}
+            >
+              Use original
+            </Button>
+          )}
         </div>
       </div>
     </div>
@@ -875,6 +883,7 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
         description={props.description}
         originalPrompt={props.originalPrompt}
         options={props.options}
+        allowOriginalPrompt={props.allowOriginalPrompt}
       />
     ),
 
@@ -1132,7 +1141,8 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
                 <ShowcaseShellSlot
                   child={viewer}
                   emptyLabel="Viewer panel is required for every showcase dashboard."
-                  className="min-w-0 lg:min-h-[34rem]"
+                  className="min-w-0 min-h-[28rem] lg:min-h-[34rem]"
+                  forceFillChild
                 />
                 {renderMode === "full" ? <ShowcaseSelectionInspector /> : null}
               </div>

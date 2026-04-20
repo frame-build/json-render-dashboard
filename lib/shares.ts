@@ -1,12 +1,15 @@
 import { Redis } from "@upstash/redis";
 import { randomUUID } from "node:crypto";
-import { mkdir, readFile, unlink, writeFile } from "node:fs/promises";
-import path from "node:path";
+import type { Spec } from "@json-render/react";
+import {
+  deepCloneJson,
+  prepareCanonicalShareSpec,
+} from "@/lib/render/share-spec";
 
 export interface DashboardShare {
   id: string;
   title: string;
-  spec: unknown;
+  spec: Spec;
   createdAt: string;
   meta?: {
     sourceMessageId?: string;
@@ -14,15 +17,14 @@ export interface DashboardShare {
   };
 }
 
-const SHARE_TTL_SECONDS = Number(process.env.SHARE_TTL_SECONDS) || 60 * 60 * 24 * 30;
+const SHARE_TTL_SECONDS =
+  Number(process.env.SHARE_TTL_SECONDS) || 60 * 60 * 24 * 30;
 const REDIS_PREFIX = "share:dashboard:";
-const FILE_FALLBACK_DIR = path.join(process.cwd(), ".cache", "shares");
 
-let redisClient: Redis | null | undefined;
-const inMemoryShares = new Map<string, DashboardShare>();
+let redisClient: Redis | null = null;
 
 function getRedis() {
-  if (redisClient !== undefined) {
+  if (redisClient) {
     return redisClient;
   }
 
@@ -30,8 +32,9 @@ function getRedis() {
   const token = process.env.KV_REST_API_TOKEN;
 
   if (!url || !token) {
-    redisClient = null;
-    return redisClient;
+    throw new Error(
+      "Missing KV_REST_API_URL or KV_REST_API_TOKEN environment variables.",
+    );
   }
 
   redisClient = new Redis({ url, token });
@@ -48,89 +51,41 @@ function normalizeTitle(value?: string | null) {
   return title.slice(0, 120);
 }
 
-function isValidShareId(shareId: string) {
-  return /^[a-zA-Z0-9-]{8,80}$/.test(shareId);
-}
-
-function isExpired(share: DashboardShare) {
-  const created = Date.parse(share.createdAt);
-  if (Number.isNaN(created)) return true;
-  return Date.now() > created + SHARE_TTL_SECONDS * 1000;
-}
-
-async function writeShareToFile(share: DashboardShare) {
-  await mkdir(FILE_FALLBACK_DIR, { recursive: true });
-  const filePath = path.join(FILE_FALLBACK_DIR, `${share.id}.json`);
-  await writeFile(filePath, JSON.stringify(share), "utf8");
-}
-
-async function readShareFromFile(shareId: string) {
-  if (!isValidShareId(shareId)) return null;
-
-  try {
-    const filePath = path.join(FILE_FALLBACK_DIR, `${shareId}.json`);
-    const payload = await readFile(filePath, "utf8");
-    const share = JSON.parse(payload) as DashboardShare;
-
-    if (isExpired(share)) {
-      await unlink(filePath).catch(() => undefined);
-      return null;
-    }
-
-    return share;
-  } catch {
-    return null;
-  }
+function cloneShare(share: DashboardShare): DashboardShare {
+  return {
+    ...share,
+    spec: deepCloneJson(share.spec),
+    meta: share.meta ? { ...share.meta } : undefined,
+  };
 }
 
 export async function createDashboardShare(input: {
   title?: string | null;
-  spec: unknown;
+  spec: Spec;
   meta?: DashboardShare["meta"];
 }) {
   const share: DashboardShare = {
     id: randomUUID(),
     title: normalizeTitle(input.title),
-    spec: input.spec,
+    spec: prepareCanonicalShareSpec(input.spec),
     createdAt: new Date().toISOString(),
-    meta: input.meta,
+    meta: input.meta ? { ...input.meta } : undefined,
   };
 
   const redis = getRedis();
-  if (redis) {
-    await redis.set(redisKey(share.id), share, { ex: SHARE_TTL_SECONDS });
-    return share;
-  }
-
-  inMemoryShares.set(share.id, share);
-  await writeShareToFile(share);
-  return share;
+  await redis.set(redisKey(share.id), share, { ex: SHARE_TTL_SECONDS });
+  return cloneShare(share);
 }
 
 export async function getDashboardShare(shareId: string) {
   const redis = getRedis();
-
-  if (redis) {
-    const share = await redis.get<DashboardShare>(redisKey(shareId));
-    return share ?? null;
-  }
-
-  const fromMemory = inMemoryShares.get(shareId);
-  if (fromMemory && !isExpired(fromMemory)) {
-    return fromMemory;
-  }
-
-  const fromFile = await readShareFromFile(shareId);
-  if (fromFile) {
-    inMemoryShares.set(shareId, fromFile);
-  }
-
-  return fromFile;
+  const share = await redis.get<DashboardShare>(redisKey(shareId));
+  return share ? cloneShare(share) : null;
 }
 
 export async function updateDashboardShare(input: {
   shareId: string;
-  spec: unknown;
+  spec: Spec;
   title?: string | null;
 }) {
   const current = await getDashboardShare(input.shareId);
@@ -140,17 +95,15 @@ export async function updateDashboardShare(input: {
 
   const nextShare: DashboardShare = {
     ...current,
-    ...(input.title !== undefined ? { title: normalizeTitle(input.title) } : {}),
-    spec: input.spec,
+    ...(input.title !== undefined
+      ? { title: normalizeTitle(input.title) }
+      : {}),
+    spec: prepareCanonicalShareSpec(input.spec),
   };
 
   const redis = getRedis();
-  if (redis) {
-    await redis.set(redisKey(input.shareId), nextShare, { ex: SHARE_TTL_SECONDS });
-    return nextShare;
-  }
-
-  inMemoryShares.set(input.shareId, nextShare);
-  await writeShareToFile(nextShare);
-  return nextShare;
+  await redis.set(redisKey(input.shareId), nextShare, {
+    ex: SHARE_TTL_SECONDS,
+  });
+  return cloneShare(nextShare);
 }

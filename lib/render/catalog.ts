@@ -106,6 +106,7 @@ export const explorerCatalog = defineCatalog(schema, {
         title: z.string().nullable(),
         description: z.string().nullable(),
         originalPrompt: z.string(),
+        allowOriginalPrompt: z.boolean().nullable(),
         options: z.custom<PromptRefinementOption[]>(
           (value) =>
             Array.isArray(value) &&
@@ -122,12 +123,13 @@ export const explorerCatalog = defineCatalog(schema, {
       }),
       description:
         "Prompt refinement chooser shown before generation when a BIM prompt is too weak or underspecified.",
-      example: {
-        title: "Strengthen your prompt before generating",
-        description:
-          "Choose a stronger BIM dashboard prompt grounded in the showcase dataset.",
-        originalPrompt: "show me walls",
-        options: [
+        example: {
+          title: "Strengthen your prompt before generating",
+          description:
+            "Choose a stronger BIM dashboard prompt grounded in the showcase dataset.",
+          originalPrompt: "show me walls",
+          allowOriginalPrompt: true,
+          options: [
           {
             label: "Walls by type and level",
             prompt:

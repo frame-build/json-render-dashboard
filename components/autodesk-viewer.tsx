@@ -279,6 +279,7 @@ export function AutodeskViewer({
   const [loadedUrn, setLoadedUrn] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [modelLoading, setModelLoading] = useState(false);
+  const [containerReady, setContainerReady] = useState(false);
   const resizeFrameRef = useRef<number | null>(null);
 
   const resolvedTheme = useMemo(
@@ -300,10 +301,38 @@ export function AutodeskViewer({
   }, []);
 
   useEffect(() => {
+    const container = containerRef.current;
+    if (!container) {
+      return;
+    }
+
+    const updateReadyState = () => {
+      const nextReady = container.clientWidth > 0 && container.clientHeight > 0;
+      setContainerReady(nextReady);
+    };
+
+    updateReadyState();
+
+    if (typeof ResizeObserver === "undefined") {
+      return;
+    }
+
+    const observer = new ResizeObserver(() => {
+      updateReadyState();
+    });
+
+    observer.observe(container);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [resolvedHeight]);
+
+  useEffect(() => {
     let disposed = false;
 
     async function setup() {
-      if (!containerRef.current || viewerRef.current) {
+      if (!containerRef.current || viewerRef.current || !containerReady) {
         return;
       }
 
@@ -354,7 +383,7 @@ export function AutodeskViewer({
         viewerRef.current = null;
       }
     };
-  }, [resolvedTheme, showModelBrowser]);
+  }, [containerReady, resolvedTheme, showModelBrowser]);
 
   useEffect(() => {
     if (!viewerRef.current) {
@@ -365,16 +394,16 @@ export function AutodeskViewer({
   }, [resolvedTheme]);
 
   useEffect(() => {
-    if (!ready) {
+    if (!ready || !containerReady) {
       return;
     }
 
     scheduleResize();
-  }, [ready, resolvedHeight, scheduleResize]);
+  }, [containerReady, ready, resolvedHeight, scheduleResize]);
 
   useEffect(() => {
     const container = containerRef.current;
-    if (!container || !ready || typeof ResizeObserver === "undefined") {
+    if (!container || !ready || !containerReady || typeof ResizeObserver === "undefined") {
       return;
     }
 
@@ -387,7 +416,7 @@ export function AutodeskViewer({
     return () => {
       observer.disconnect();
     };
-  }, [ready, scheduleResize]);
+  }, [containerReady, ready, scheduleResize]);
 
   useEffect(() => {
     let cancelled = false;
@@ -396,7 +425,7 @@ export function AutodeskViewer({
       const viewer = viewerRef.current;
       const Autodesk = window.Autodesk;
 
-      if (!viewer || !Autodesk || !ready) {
+      if (!viewer || !Autodesk || !ready || !containerReady) {
         return;
       }
 
@@ -443,7 +472,7 @@ export function AutodeskViewer({
     return () => {
       cancelled = true;
     };
-  }, [fitToView, normalizedUrn, ready, scheduleResize]);
+  }, [containerReady, fitToView, normalizedUrn, ready, scheduleResize]);
 
   useEffect(() => {
     const viewer = viewerRef.current;
@@ -522,9 +551,9 @@ export function AutodeskViewer({
     >
       <div ref={containerRef} className="h-full w-full" />
 
-      {(modelLoading || (!ready && !error)) && (
+      {(modelLoading || ((!ready || !containerReady) && !error)) && (
         <div className="absolute inset-0 flex items-center justify-center bg-background/70 text-sm text-muted-foreground backdrop-blur-[1px]">
-          Loading Autodesk Viewer…
+          {containerReady ? "Loading Autodesk Viewer…" : "Preparing viewer layout…"}
         </div>
       )}
 

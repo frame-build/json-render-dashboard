@@ -29,7 +29,7 @@ const AGENT_INSTRUCTIONS = `You generate one thing only: Autodesk showcase dashb
 
 WORKFLOW:
 1. Step 0 is always prompt assessment. The app forces the assessPromptRefinement tool first.
-2. If assessPromptRefinement says the prompt needs refinement, stop. Do not call any other tools and do not generate a dashboard.
+2. If assessPromptRefinement says the prompt should be refined or is irrelevant, stop. Do not call any other tools and do not generate a dashboard.
 3. If the prompt is strong enough, call getTakeoffShowcaseData first so you have the fixed APS model URN and dashboard layout contract.
 4. Then call queryShowcaseModel for the requested categories, families, levels, materials, activities, or search terms so the dashboard is based on real normalized model data.
 5. Respond with a brief summary of what the dashboard covers.
@@ -200,10 +200,10 @@ export const agent = new ToolLoopAgent<AgentCallOptions, typeof tools>({
       }
 
       const output = assessment.output as
-        | { needsRefinement?: unknown }
+        | { action?: unknown }
         | undefined;
 
-      return output?.needsRefinement === true;
+      return output?.action === "refine" || output?.action === "irrelevant";
     },
   ],
   temperature: 0.3,

@@ -4,7 +4,7 @@ import { assessPromptRefinement } from "@/lib/chat/prompt-refinement";
 
 export const assessPromptRefinementTool = tool({
   description:
-    "Assess whether the current user prompt is too weak or underspecified for BIM dashboard generation. Use this before any data-query tool calls.",
+    "Assess whether the current user prompt should generate directly, should first be refined, or is irrelevant to the APS dashboard workflow. Use this before any data-query tool calls.",
   inputSchema: z.object({
     prompt: z
       .string()

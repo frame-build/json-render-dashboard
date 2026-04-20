@@ -47,48 +47,60 @@ const DATASET_TERMS = new Set(
     .filter(Boolean),
 );
 
-const PROMPT_REFINEMENT_CLASSIFICATION_EXAMPLES = [
+const PROMPT_TRIAGE_EXAMPLES = [
   {
     prompt: "walls",
-    shouldRefine: true,
+    action: "refine",
     reason:
       "Category-only prompt. It does not specify dashboard intent, filters, KPIs, charts, or tables.",
   },
   {
     prompt: "show me walls",
-    shouldRefine: true,
+    action: "refine",
     reason:
       "Still too underspecified for BIM dashboard generation. It mentions an object category but not the dashboard structure or analysis scope.",
   },
   {
     prompt: "floors",
-    shouldRefine: true,
+    action: "refine",
     reason:
       "Single-category prompt with no dashboard, filter, KPI, chart, or schedule intent.",
   },
   {
     prompt: "steel framing",
-    shouldRefine: true,
+    action: "refine",
     reason:
       "Broad trade/category phrase without enough BIM dashboard detail to generate reliably.",
   },
   {
     prompt: "duct dashboard",
-    shouldRefine: true,
+    action: "refine",
     reason:
       "Has dashboard intent, but is still too weak because it lacks filters, metrics, or analysis scope.",
   },
   {
+    prompt: "hello",
+    action: "irrelevant",
+    reason:
+      "Greeting-only prompt. It is not a request for an APS showcase dashboard.",
+  },
+  {
+    prompt: "how are you",
+    action: "irrelevant",
+    reason:
+      "Conversational small talk, not a dashboard-generation request.",
+  },
+  {
     prompt:
       "Build a Walls dashboard with Type, Level, Material, and Search filters, wall count, length, area, and volume KPIs, charts by type and level, and a full wall schedule",
-    shouldRefine: false,
+    action: "generate",
     reason:
       "Already specific enough: dashboard intent, filters, KPIs, charts, and a detail table are all present.",
   },
   {
     prompt:
       "Create a Structural Framing dashboard with the Autodesk viewer, Level and Material filters, quantity KPIs, charts by type, and a member schedule",
-    shouldRefine: false,
+    action: "generate",
     reason:
       "Specific BIM dashboard prompt with clear visualization and data requirements.",
   },
@@ -110,7 +122,7 @@ const PromptRefinementSchema = z.object({
 });
 
 const PromptRefinementDecisionSchema = z.object({
-  needsRefinement: z.boolean(),
+  action: z.enum(["generate", "refine", "irrelevant"]),
   reason: z.string(),
   title: z.string().nullable(),
   description: z.string().nullable(),
@@ -184,7 +196,7 @@ export function getPromptRefinementSelection(
 }
 
 export interface PromptRefinementAssessment {
-  needsRefinement: boolean;
+  action: "generate" | "refine" | "irrelevant";
   reason: string;
   refinement: PromptRefinementResult | null;
 }
@@ -195,7 +207,7 @@ export async function assessPromptRefinement(
   const normalizedPrompt = prompt.trim();
   if (!normalizedPrompt) {
     return {
-      needsRefinement: false,
+      action: "irrelevant",
       reason: "Prompt is empty.",
       refinement: null,
     };
@@ -209,26 +221,30 @@ export async function assessPromptRefinement(
         schema: PromptRefinementDecisionSchema,
       }),
       prompt: [
-        "You are classifying whether a user prompt is too weak or underspecified for a BIM dashboard generator.",
+        "You are classifying whether a user prompt should generate a BIM dashboard directly, should first be refined, or is irrelevant to this app.",
         "The app builds dashboards for a fixed Autodesk showcase model.",
-        "Return shouldRefine=true when the prompt is too vague, too short, missing enough dashboard structure, or missing enough analysis scope to reliably generate a strong BIM dashboard.",
-        "Return shouldRefine=false only when the prompt is already specific enough to generate directly.",
+        "Return action='refine' when the prompt is BIM-related but too vague, too short, missing dashboard structure, or missing enough analysis scope to reliably generate a strong dashboard.",
+        "Return action='irrelevant' when the prompt is small talk, casual chat, or not really asking for a BIM/dashboard result.",
+        "Return action='generate' only when the prompt is already specific enough to generate directly.",
         "Important rules:",
         "- Mentioning only a category, family, or trade is NOT enough.",
         "- Short prompts like 'walls', 'show me walls', 'floors', 'windows', or 'steel framing' should refine.",
+        "- Greetings or chat prompts like 'hello', 'how are you', or unrelated questions should be irrelevant.",
         "- Prompts that do not clearly request filters, KPIs/metrics, charts/groupings, or tables/schedules should usually refine.",
-        "- Prompts that already specify dashboard intent plus meaningful analysis structure should not refine.",
+        "- Prompts that already specify dashboard intent plus meaningful analysis structure should generate.",
+        "- When action is 'refine', provide 3 to 5 prompt options grounded in the showcase dataset.",
+        "- When action is 'irrelevant', do not suggest a dashboard UI. Just explain briefly that this app is for APS showcase dashboards.",
         `Top categories: ${TOP_CATEGORIES.join(", ")}.`,
         `Top families: ${TOP_FAMILIES.join(", ")}.`,
         `Supported filters: ${SUPPORTED_FILTERS.join(", ")}.`,
         `Supported KPI quantities: ${SUPPORTED_METRICS.join(", ")}.`,
         `Dataset vocabulary hints: ${Array.from(DATASET_TERMS).slice(0, 60).join(", ")}.`,
         "Examples:",
-        ...PROMPT_REFINEMENT_CLASSIFICATION_EXAMPLES.map(
+        ...PROMPT_TRIAGE_EXAMPLES.map(
           (example) =>
             [
               `Prompt: ${example.prompt}`,
-              `Result: needsRefinement=${example.shouldRefine}`,
+              `Result: action=${example.action}`,
               `Reason: ${example.reason}`,
             ].join("\n"),
         ),
@@ -237,12 +253,16 @@ export async function assessPromptRefinement(
     });
 
     const assessment = {
-      needsRefinement: output.needsRefinement,
+      action: output.action,
       reason: output.reason.trim(),
-      refinement: output.needsRefinement
-        ? normalizeRefinementResult(normalizedPrompt, {
+      refinement: output.action !== "refine"
+        ? null
+        : normalizeRefinementResult(
+          normalizedPrompt,
+          {
             title:
-              output.title?.trim() || "Strengthen your prompt before generating",
+              output.title?.trim()
+              || "Strengthen your prompt before generating",
             description:
               output.description?.trim()
               || "Choose a more specific BIM dashboard prompt grounded in the showcase dataset.",
@@ -252,13 +272,13 @@ export async function assessPromptRefinement(
                 prompt: option.prompt,
                 rationale: option.rationale,
               })) ?? [],
-          })
-        : null,
+          },
+        ),
     };
 
     console.info("[prompt-refinement][assessment]", {
       prompt: normalizedPrompt,
-      needsRefinement: assessment.needsRefinement,
+      action: assessment.action,
       reason: assessment.reason,
       optionCount: assessment.refinement?.options.length ?? 0,
     });
@@ -269,7 +289,7 @@ export async function assessPromptRefinement(
       prompt: normalizedPrompt,
     });
     return {
-      needsRefinement: false,
+      action: "generate",
       reason: "Prompt assessment failed.",
       refinement: null,
     };
@@ -297,7 +317,9 @@ function pickCategoryHint(prompt: string) {
   return "Walls";
 }
 
-function buildFallbackPromptRefinement(prompt: string): PromptRefinementResult {
+function buildFallbackPromptRefinement(
+  prompt: string,
+): PromptRefinementResult {
   const categoryHint = pickCategoryHint(prompt);
 
   const optionsByCategory: Record<string, PromptRefinementOption[]> = {
@@ -541,6 +563,7 @@ export async function generatePromptRefinement(
 export function buildPromptRefinementSpec(
   refinement: PromptRefinementResult,
   originalPrompt: string,
+  allowOriginalPrompt = true,
 ): Spec {
   return {
     root: "prompt-refinement",
@@ -552,6 +575,7 @@ export function buildPromptRefinementSpec(
           description: refinement.description,
           originalPrompt,
           options: refinement.options,
+          allowOriginalPrompt,
         },
       },
     },

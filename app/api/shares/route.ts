@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { createDashboardShare } from "@/lib/shares";
+import type { Spec } from "@json-render/react";
 
 export const runtime = "nodejs";
 
@@ -28,7 +29,7 @@ export async function POST(req: Request) {
 
     const share = await createDashboardShare({
       title: parsed.title,
-      spec: parsed.spec,
+      spec: parsed.spec as Spec,
       meta: {
         sourceMessageId: parsed.sourceMessageId ?? undefined,
         summaryText: parsed.summaryText ?? undefined,

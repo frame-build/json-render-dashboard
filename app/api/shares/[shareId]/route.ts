@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { getDashboardShare, updateDashboardShare } from "@/lib/shares";
+import type { Spec } from "@json-render/react";
 
 export const runtime = "nodejs";
 
@@ -54,7 +55,7 @@ export async function PUT(
 
     const share = await updateDashboardShare({
       shareId,
-      spec: parsed.spec,
+      spec: parsed.spec as Spec,
       title: parsed.title,
     });
 

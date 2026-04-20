@@ -40,44 +40,49 @@ const transport = new DefaultChatTransport({ api: "/api/generate" });
 
 const SUGGESTIONS = [
   {
-    label: "Walls",
+    label: "Basic Wall",
     prompt:
-      'Build a Walls dashboard for the Autodesk showcase model with the Autodesk viewer, Wall Type, Level, Material, and Search filters, wall count, length, area, and volume KPIs, charts by type and level, and a full wall schedule',
+      'Build a Basic Wall dashboard for the Autodesk showcase model with the Autodesk viewer, Family, Type, Level, Material, and Search filters, wall count, length, area, and volume KPIs, charts by type and level, and a full Basic Wall schedule',
   },
   {
-    label: "Curtain wall",
+    label: "Curtain Wall",
     prompt:
       'Build a Curtain Wall dashboard for the Autodesk showcase model with the Autodesk viewer, Family, Type, Level, and Material filters, facade count, area, and volume KPIs, charts by type and level, and a full curtain wall schedule',
   },
   {
-    label: "Structural framing",
+    label: "Round Duct",
+    prompt:
+      'Build a Round Duct dashboard for the Autodesk showcase model with the Autodesk viewer, Family, Type, Level, Material, and Search filters, duct count and length KPIs, charts by type and level, and a full Round Duct schedule',
+  },
+  {
+    label: "Duct Fittings",
+    prompt:
+      'Build a Duct Fittings dashboard for the Autodesk showcase model focused on the Round Elbow family and Tees types, with the Autodesk viewer, Category, Family, Type, Level, and Search filters, fitting count KPIs, charts by family and type, and a full duct fittings schedule',
+  },
+  {
+    label: "Structural Framing",
     prompt:
       'Build a Structural Framing dashboard for the Autodesk showcase model with the Autodesk viewer, Type, Level, Material, and Search filters, framing count, length, area, and volume KPIs, charts for W Shapes and K-Series Bar Joist-Angle Web members by type and level, and a full member schedule',
   },
   {
-    label: "Ducts and fittings",
+    label: "Support - Steel Bar",
     prompt:
-      'Build a Ducts and Duct Fittings dashboard for the Autodesk showcase model with the Autodesk viewer, Category, Family, Type, and Level filters, duct count and length KPIs, charts by family and type, and a full duct schedule',
+      'Build a Supports dashboard for the Autodesk showcase model focused on the Support - Steel Bar family, with the Autodesk viewer, Category, Family, Type, Level, and Material filters, support count KPIs, charts by type and level, and a full support schedule',
   },
   {
     label: "Floors",
     prompt:
-      'Build a Floors dashboard for the Autodesk showcase model with the Autodesk viewer, Family, Type, Level, and Material filters, floor count, area, and volume KPIs, charts by type and level, and a full floor schedule',
+      'Build a Floor dashboard for the Autodesk showcase model with the Autodesk viewer, Family, Type, Level, and Material filters, floor count, area, and volume KPIs, charts by type and level, and a full Floor schedule',
   },
   {
     label: "Windows",
     prompt:
-      'Build a Windows dashboard for the Autodesk showcase model focused on the Window-Sliding-Double family, with Family, Type, Level, and Search filters, count KPIs, charts by type and level, and a full window schedule',
+      'Build a Windows dashboard for the Autodesk showcase model focused on the Window-Sliding-Double family, with the Autodesk viewer, Family, Type, Level, and Search filters, count KPIs, charts by type and level, and a full window schedule',
   },
   {
     label: "Doors",
     prompt:
-      'Build a Doors dashboard for the Autodesk showcase model focused on the Door-Passage-Single-Flush family, with Family, Type, Level, and Search filters, count KPIs, charts by type and level, and a full door schedule',
-  },
-  {
-    label: "Foundations and columns",
-    prompt:
-      'Build a Structural Foundations, Columns, and Structural Columns dashboard for the Autodesk showcase model with the Autodesk viewer, Category, Type, Material, and Level filters, count, area, and volume KPIs, charts by type and material, and a full structural schedule',
+      'Build a Doors dashboard for the Autodesk showcase model focused on the Door-Passage-Single-Flush family, with the Autodesk viewer, Family, Type, Level, and Search filters, count KPIs, charts by type and level, and a full door schedule',
   },
 ];
 
