@@ -5,6 +5,7 @@ import {
   deepCloneJson,
   prepareCanonicalShareSpec,
 } from "@/lib/render/share-spec";
+import { cleanDashboardTitle } from "@/lib/dashboard-naming";
 
 export interface DashboardShare {
   id: string;
@@ -46,7 +47,7 @@ function redisKey(shareId: string) {
 }
 
 function normalizeTitle(value?: string | null) {
-  const title = value?.trim();
+  const title = cleanDashboardTitle(value);
   if (!title) return "Shared dashboard";
   return title.slice(0, 120);
 }

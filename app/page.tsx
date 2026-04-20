@@ -9,6 +9,7 @@ import {
 import { useJsonRenderMessage } from "@json-render/react";
 import { DashboardSpecRenderer } from "@/lib/render/renderer";
 import { mergeShowcaseToolStateIntoSpec } from "@/lib/render/merge-showcase-tool-state";
+import { APP_DISPLAY_NAME } from "@/lib/dashboard-naming";
 import { ThemeToggle } from "@/components/theme-toggle";
 import {
   PROMPT_REFINEMENT_DATA_PART_TYPE,
@@ -639,7 +640,7 @@ export default function ChatPage() {
       {/* Header */}
       <header className="border-b px-6 py-3 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-3">
-          <h1 className="text-lg font-semibold">APS Dashboard Showcase</h1>
+          <h1 className="text-lg font-semibold">{APP_DISPLAY_NAME}</h1>
         </div>
         <div className="flex items-center gap-2">
           {messages.length > 0 && (

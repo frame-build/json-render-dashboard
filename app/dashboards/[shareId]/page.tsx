@@ -5,6 +5,10 @@ import { getDashboardShare } from "@/lib/shares";
 import { SharedDashboardEditor } from "@/components/shared-dashboard-editor";
 import { ThemeToggle } from "@/components/theme-toggle";
 import type { Spec } from "@json-render/react";
+import {
+  APP_DISPLAY_NAME,
+  toRepoStyleDashboardName,
+} from "@/lib/dashboard-naming";
 
 interface PageProps {
   params: Promise<{ shareId: string }>;
@@ -20,8 +24,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
+  const projectName = toRepoStyleDashboardName(share.title);
+
   return {
-    title: `${share.title} | Shared dashboard`,
+    title: `${projectName} · ${APP_DISPLAY_NAME}`,
     description: "Shared json-render dashboard",
   };
 }
@@ -34,14 +40,16 @@ export default async function SharedDashboardPage({ params }: PageProps) {
     notFound();
   }
 
+  const projectName = toRepoStyleDashboardName(share.title);
+
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b border-border/60">
         <div className="mx-auto flex w-full max-w-7xl items-center justify-between px-6 py-3">
           <div>
-            <h1 className="text-sm font-semibold tracking-tight">{share.title}</h1>
+            <h1 className="text-sm font-semibold tracking-tight">{projectName}</h1>
             <p className="text-xs text-muted-foreground">
-              Shared dashboard &middot; {new Date(share.createdAt).toLocaleString()}
+              {APP_DISPLAY_NAME} &middot; {new Date(share.createdAt).toLocaleString()}
             </p>
           </div>
           <div className="flex items-center gap-3">
