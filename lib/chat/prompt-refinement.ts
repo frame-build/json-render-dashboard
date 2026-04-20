@@ -564,6 +564,7 @@ export function buildPromptRefinementSpec(
   refinement: PromptRefinementResult,
   originalPrompt: string,
   allowOriginalPrompt = true,
+  autoSelectSeconds = 8,
 ): Spec {
   return {
     root: "prompt-refinement",
@@ -576,6 +577,7 @@ export function buildPromptRefinementSpec(
           originalPrompt,
           options: refinement.options,
           allowOriginalPrompt,
+          autoSelectSeconds,
         },
       },
     },

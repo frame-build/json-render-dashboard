@@ -50,6 +50,7 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Badge as UiBadge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
@@ -730,25 +731,37 @@ function PromptRefinementChooser({
   originalPrompt,
   options,
   allowOriginalPrompt = true,
+  autoSelectSeconds = 8,
 }: {
   title?: string | null;
   description?: string | null;
   originalPrompt: string;
   options: PromptRefinementOption[];
   allowOriginalPrompt?: boolean | null;
+  autoSelectSeconds?: number | null;
 }) {
   const submitRefinement = useContext(PromptRefinementSubmitContext);
   const [selectedPrompt, setSelectedPrompt] = useState<string>(
     options[0]?.prompt ?? originalPrompt,
   );
+  const [hasUserSelectedOption, setHasUserSelectedOption] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [didSubmitSelection, setDidSubmitSelection] = useState(false);
+  const autoSelectDurationSeconds = Math.max(0, autoSelectSeconds ?? 0);
+  const autoSelectEnabled =
+    Boolean(submitRefinement) && autoSelectDurationSeconds > 0;
+  const countdownDurationMs = autoSelectDurationSeconds * 1000;
+  const [timeRemainingMs, setTimeRemainingMs] = useState(countdownDurationMs);
+  const hasSubmittedRef = useRef(false);
 
   const handleSubmit = useCallback(
     async (mode: PromptRefinementSelection["mode"]) => {
-      if (!submitRefinement || isSubmitting) {
+      if (!submitRefinement || isSubmitting || hasSubmittedRef.current) {
         return;
       }
 
+      hasSubmittedRef.current = true;
+      setDidSubmitSelection(true);
       setIsSubmitting(true);
       try {
         await submitRefinement({
@@ -763,6 +776,44 @@ function PromptRefinementChooser({
     [isSubmitting, originalPrompt, selectedPrompt, submitRefinement],
   );
 
+  useEffect(() => {
+    if (
+      !autoSelectEnabled ||
+      hasUserSelectedOption ||
+      isSubmitting ||
+      didSubmitSelection
+    ) {
+      return;
+    }
+
+    const deadline = Date.now() + countdownDurationMs;
+    setTimeRemainingMs(countdownDurationMs);
+
+    const tick = () => {
+      const nextRemaining = Math.max(0, deadline - Date.now());
+      setTimeRemainingMs(nextRemaining);
+
+      if (nextRemaining === 0) {
+        window.clearInterval(intervalId);
+        void handleSubmit("enriched");
+      }
+    };
+
+    const intervalId = window.setInterval(tick, 100);
+    tick();
+
+    return () => window.clearInterval(intervalId);
+  }, [
+    autoSelectEnabled,
+    countdownDurationMs,
+    didSubmitSelection,
+    handleSubmit,
+    hasUserSelectedOption,
+    isSubmitting,
+  ]);
+
+  const countdownLabel = Math.ceil(timeRemainingMs / 1000);
+
   return (
     <div className="w-full rounded-lg border border-border/60 bg-card">
       <div className="border-b border-border/50 px-5 py-4">
@@ -776,7 +827,7 @@ function PromptRefinementChooser({
 
       <div className="space-y-4 px-5 py-4">
         <div className="rounded-md border border-border/50 bg-muted/30 px-3 py-2.5">
-          <div className="text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
+          <div className="text-[0.65rem] font-semibold uppercase text-muted-foreground">
             Original prompt
           </div>
           <p className="mt-1 text-sm leading-relaxed">{originalPrompt}</p>
@@ -793,14 +844,22 @@ function PromptRefinementChooser({
                 <button
                   key={option.prompt}
                   type="button"
-                  onClick={() => setSelectedPrompt(option.prompt)}
+                  onClick={() => {
+                    setSelectedPrompt(option.prompt);
+                    setHasUserSelectedOption(true);
+                  }}
                   className={`rounded-md border px-3 py-2.5 text-left transition-colors ${
                     active
                       ? "border-primary/60 bg-primary/5"
                       : "border-border/60 hover:bg-muted/20"
                   }`}
                 >
-                  <div className="text-sm font-medium">{option.label}</div>
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="text-sm font-medium">{option.label}</div>
+                    {active && autoSelectEnabled && !hasUserSelectedOption && (
+                      <UiBadge variant="outline">Default</UiBadge>
+                    )}
+                  </div>
                   <p className="mt-0.5 text-xs text-muted-foreground">
                     {option.rationale}
                   </p>
@@ -813,7 +872,7 @@ function PromptRefinementChooser({
         <div className="flex gap-2 pt-1">
           <Button
             size="sm"
-            disabled={!submitRefinement || isSubmitting}
+            disabled={!submitRefinement || isSubmitting || didSubmitSelection}
             onClick={() => void handleSubmit("enriched")}
           >
             {isSubmitting ? (
@@ -829,12 +888,26 @@ function PromptRefinementChooser({
             <Button
               size="sm"
               variant="outline"
-              disabled={!submitRefinement || isSubmitting}
+              disabled={!submitRefinement || isSubmitting || didSubmitSelection}
               onClick={() => void handleSubmit("original")}
             >
               Use original
             </Button>
           )}
+          {autoSelectEnabled &&
+            !hasUserSelectedOption &&
+            !isSubmitting &&
+            !didSubmitSelection && (
+              <div className="ml-auto flex items-center gap-2 self-center text-xs text-muted-foreground">
+                <Loader2 className="h-3 w-3 animate-spin text-primary" />
+                <span>
+                  Auto-send in{" "}
+                  <span className="font-medium text-foreground">
+                    {countdownLabel}s
+                  </span>
+                </span>
+              </div>
+            )}
         </div>
       </div>
     </div>
@@ -884,6 +957,7 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
         originalPrompt={props.originalPrompt}
         options={props.options}
         allowOriginalPrompt={props.allowOriginalPrompt}
+        autoSelectSeconds={props.autoSelectSeconds}
       />
     ),
 

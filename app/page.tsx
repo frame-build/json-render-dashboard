@@ -594,7 +594,7 @@ export default function ChatPage() {
   );
 
   const handlePromptRefinementSubmit = useCallback(
-    async (selection: PromptRefinementSelection) => {
+    (selection: PromptRefinementSelection) => {
       if (isStreaming) {
         return;
       }
@@ -604,7 +604,7 @@ export default function ChatPage() {
         return;
       }
 
-      await sendMessage({
+      void sendMessage({
         parts: [
           { type: "text", text: prompt },
           {

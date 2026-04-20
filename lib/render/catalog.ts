@@ -107,6 +107,7 @@ export const explorerCatalog = defineCatalog(schema, {
         description: z.string().nullable(),
         originalPrompt: z.string(),
         allowOriginalPrompt: z.boolean().nullable(),
+        autoSelectSeconds: z.number().int().positive().nullable(),
         options: z.custom<PromptRefinementOption[]>(
           (value) =>
             Array.isArray(value) &&
@@ -129,6 +130,7 @@ export const explorerCatalog = defineCatalog(schema, {
             "Choose a stronger BIM dashboard prompt grounded in the showcase dataset.",
           originalPrompt: "show me walls",
           allowOriginalPrompt: true,
+          autoSelectSeconds: 8,
           options: [
           {
             label: "Walls by type and level",
