@@ -12,8 +12,10 @@ import { mergeShowcaseToolStateIntoSpec } from "@/lib/render/merge-showcase-tool
 import { APP_DISPLAY_NAME } from "@/lib/dashboard-naming";
 import { ThemeToggle } from "@/components/theme-toggle";
 import {
+  CHAT_STATUS_DATA_PART_TYPE,
   PROMPT_REFINEMENT_DATA_PART_TYPE,
   type AppMessage,
+  type ChatStatusData,
   type PromptRefinementSelection,
 } from "@/lib/chat/types";
 import {
@@ -93,10 +95,6 @@ const SUGGESTIONS = [
 
 /** Readable labels for tool names: [loading, done] */
 const TOOL_LABELS: Record<string, [string, string]> = {
-  getTakeoffShowcaseData: [
-    "Loading showcase dashboard context",
-    "Loaded showcase dashboard context",
-  ],
   queryShowcaseModel: [
     "Querying showcase model data",
     "Queried showcase model data",
@@ -161,11 +159,13 @@ function MessageBubble({
   message,
   isLast,
   isStreaming,
+  streamingStatus,
   handlePromptRefinementSubmit,
 }: {
   message: AppMessage;
   isLast: boolean;
   isStreaming: boolean;
+  streamingStatus: string | null;
   handlePromptRefinementSubmit: (
     selection: PromptRefinementSelection,
   ) => void | Promise<void>;
@@ -335,6 +335,7 @@ function MessageBubble({
   const hasAnything = segments.length > 0 || hasSpec;
   const showLoader =
     isLast && isStreaming && message.role === "assistant" && !hasAnything;
+  const loaderLabel = streamingStatus ?? "Thinking...";
 
   useEffect(() => {
     if (!hasSpec || !isLast || isStreaming) {
@@ -460,7 +461,7 @@ function MessageBubble({
 
         {showLoader && (
           <div className="text-sm text-muted-foreground animate-shimmer">
-            Thinking...
+            {loaderLabel}
           </div>
         )}
       </div>
@@ -506,7 +507,7 @@ function MessageBubble({
       {/* Loading indicator */}
       {showLoader && (
         <div className="text-sm text-muted-foreground animate-shimmer">
-          Thinking...
+          {loaderLabel}
         </div>
       )}
 
@@ -522,6 +523,7 @@ function MessageBubble({
 
 export default function ChatPage() {
   const [input, setInput] = useState("");
+  const [transientStatus, setTransientStatus] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const scrollContainerRef = useRef<HTMLElement>(null);
   const [showScrollButton, setShowScrollButton] = useState(false);
@@ -530,9 +532,31 @@ export default function ChatPage() {
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const { messages, sendMessage, setMessages, status, error } =
-    useChat<AppMessage>({ transport });
+    useChat<AppMessage>({
+      transport,
+      onData: (dataPart) => {
+        if (dataPart.type !== CHAT_STATUS_DATA_PART_TYPE) {
+          return;
+        }
+
+        const payload = dataPart.data as ChatStatusData;
+        setTransientStatus(payload.message);
+      },
+      onFinish: () => {
+        setTransientStatus(null);
+      },
+      onError: () => {
+        setTransientStatus(null);
+      },
+    });
 
   const isStreaming = status === "streaming" || status === "submitted";
+
+  useEffect(() => {
+    if (!isStreaming) {
+      setTransientStatus(null);
+    }
+  }, [isStreaming]);
 
   // Track whether the user has scrolled away from the bottom.
   // During programmatic scrolling, suppress button updates until we arrive.
@@ -696,6 +720,7 @@ export default function ChatPage() {
                 message={message}
                 isLast={index === messages.length - 1}
                 isStreaming={isStreaming}
+                streamingStatus={transientStatus}
                 handlePromptRefinementSubmit={handlePromptRefinementSubmit}
               />
             ))}

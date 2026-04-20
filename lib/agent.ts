@@ -2,24 +2,17 @@ import { ToolLoopAgent, stepCountIs } from "ai";
 import { gateway } from "@ai-sdk/gateway";
 import { z } from "zod";
 import { explorerCatalog } from "./render/catalog";
-import { getTakeoffShowcaseData } from "./tools/takeoff-showcase";
 import { queryShowcaseModel } from "./tools/showcase-model-query";
-import { assessPromptRefinementTool } from "./tools/assess-prompt-refinement";
 
 const modelId = process.env.AI_GATEWAY_MODEL;
 
-const AgentCallOptionsSchema = z.object({
-  latestPrompt: z.string().nullable(),
-  skipPromptAssessment: z.boolean().nullable(),
-});
-
-type AgentCallOptions = z.infer<typeof AgentCallOptionsSchema>;
-
 const tools = {
-  assessPromptRefinement: assessPromptRefinementTool,
-  getTakeoffShowcaseData,
   queryShowcaseModel,
 };
+
+const AgentCallOptionsSchema = z.object({
+  showcaseContext: z.string(),
+});
 
 if (!modelId) {
   throw new Error("Missing AI_GATEWAY_MODEL environment variable.");
@@ -28,12 +21,11 @@ if (!modelId) {
 const AGENT_INSTRUCTIONS = `You generate one thing only: Autodesk showcase dashboards for the fixed APS model. Every supported response must be a dashboard and must include the AutodeskViewer inside the dashboard.
 
 WORKFLOW:
-1. Step 0 is always prompt assessment. The app forces the assessPromptRefinement tool first.
-2. If assessPromptRefinement says the prompt should be refined or is irrelevant, stop. Do not call any other tools and do not generate a dashboard.
-3. If the prompt is strong enough, call getTakeoffShowcaseData first so you have the fixed APS model URN and dashboard layout contract.
-4. Then call queryShowcaseModel for the requested categories, families, levels, materials, activities, or search terms so the dashboard is based on real normalized model data.
-5. Respond with a brief summary of what the dashboard covers.
-6. Then output the JSONL UI spec wrapped in a \`\`\`spec fence.
+1. Prompt refinement is handled by the route before you run. You will only receive prompts that should generate a dashboard.
+2. You are given the fixed showcase model context, URN, and dashboard contract directly in your instructions.
+3. Call queryShowcaseModel for the requested categories, families, types, levels, materials, or search terms so the dashboard is based on real normalized model data.
+4. Respond with a brief summary of what the dashboard covers.
+5. Then output the JSONL UI spec wrapped in a \`\`\`spec fence.
 
 PRODUCT CONTRACT:
 - This app is a dashboard showcase, not a general assistant.
@@ -70,11 +62,16 @@ DASHBOARD CONTRACT:
   - 7+ charts: keep Tabs + TabContent and also add Pagination bound to the same page state path.
 
 SHOWCASE DATA RULES:
-- The app injects canonical getTakeoffShowcaseData output at /showcase.
+- The app injects canonical showcase context at /showcase.
 - The app injects canonical queryShowcaseModel output at /analysis.
 - Reference /showcase and /analysis in bindings, but do not invent, trim, or overwrite those datasets in spec state.
 - Use the URN from /showcase/model/urn for AutodeskViewer.
-- Always surface real filters from the dataset when possible: categories, families, types, levels, materials, activities, or search.
+- Always surface real filters from the dataset when possible: categories, families, types, levels, materials, or search.
+- Match the filter label to the category semantics when needed:
+  - Walls should label the level filter as Base Constraint.
+  - Ducts and Structural Framing should label the level filter as Reference Level.
+  - Do not expose a level filter for Floors, Windows, or Doors unless the bound data actually supports it.
+- Treat search as a keyword search box, not as a structured BIM property.
 - If the prompt is broad, choose the most relevant filters for that category mix instead of omitting filters.
 - Always provide at least 4 visible filter controls in the filters section (SelectInput/TextInput/RadioGroup). Search counts toward this minimum.
 - If one chart type is weak for the current data slice, still include at least one chart and one table.
@@ -112,18 +109,21 @@ ${explorerCatalog.prompt({
   ],
 })}`;
 
-export const agent = new ToolLoopAgent<AgentCallOptions, typeof tools>({
+export const agent = new ToolLoopAgent({
   model: gateway(modelId),
   instructions: AGENT_INSTRUCTIONS,
   callOptionsSchema: AgentCallOptionsSchema,
-  tools,
-  prepareCall: async (baseCallArgs) => ({
-    ...baseCallArgs,
-    experimental_context: {
-      latestPrompt: baseCallArgs.options.latestPrompt ?? undefined,
-      skipPromptAssessment: baseCallArgs.options.skipPromptAssessment ?? false,
-    },
+  prepareCall: ({ options, ...settings }) => ({
+    ...settings,
+    instructions: [
+      settings.instructions,
+      "Fixed showcase context:",
+      "```json",
+      options.showcaseContext,
+      "```",
+    ].join("\n"),
   }),
+  tools,
   onFinish: async ({
     totalUsage,
     providerMetadata,
@@ -171,40 +171,18 @@ export const agent = new ToolLoopAgent<AgentCallOptions, typeof tools>({
       });
     }
   },
-  prepareStep: async ({ stepNumber, experimental_context }) => {
-    const context = (experimental_context ?? {}) as {
-      skipPromptAssessment?: boolean;
-    };
-
-    if (stepNumber === 0 && !context.skipPromptAssessment) {
+  prepareStep: async ({ stepNumber }) => {
+    if (stepNumber === 0) {
       return {
-        activeTools: ["assessPromptRefinement"],
+        activeTools: ["queryShowcaseModel"],
         toolChoice: "required",
       };
     }
 
     return {
-      activeTools: ["getTakeoffShowcaseData", "queryShowcaseModel"],
+      activeTools: ["queryShowcaseModel"],
     };
   },
-  stopWhen: [
-    stepCountIs(6),
-    ({ steps }) => {
-      const lastStep = steps[steps.length - 1];
-      const assessment = lastStep?.toolResults.find(
-        (toolResult) => toolResult.toolName === "assessPromptRefinement",
-      );
-
-      if (!assessment) {
-        return false;
-      }
-
-      const output = assessment.output as
-        | { action?: unknown }
-        | undefined;
-
-      return output?.action === "refine" || output?.action === "irrelevant";
-    },
-  ],
+  stopWhen: [stepCountIs(5)],
   temperature: 0.3,
 });

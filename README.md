@@ -78,7 +78,7 @@ Core AI settings:
   - main dashboard generation model
 - `AI_GATEWAY_PROMPT_REFINEMENT_MODEL`
   - optional separate model for weak-prompt detection and prompt refinement
-  - defaults to `openai/gpt-5-nano` in code if unset
+  - defaults to `google/gemini-3-flash` in code if unset
 
 APS settings:
 

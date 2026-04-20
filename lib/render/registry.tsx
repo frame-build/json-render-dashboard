@@ -3,6 +3,7 @@
 import {
   Children,
   createContext,
+  useDeferredValue,
   useCallback,
   useContext,
   useEffect,
@@ -11,7 +12,13 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { useBoundProp, defineRegistry } from "@json-render/react";
+import {
+  useBoundProp,
+  defineRegistry,
+  useStateStore,
+  useStateValue,
+} from "@json-render/react";
+import { getByPath } from "@json-render/core";
 import { shadcnComponents } from "@json-render/shadcn";
 import {
   Bar,
@@ -72,6 +79,10 @@ import {
 } from "lucide-react";
 import { AutodeskViewer as AutodeskViewerComponent } from "@/components/autodesk-viewer";
 import type { ShowcaseElement } from "@/lib/aps/showcase-dataset";
+import type {
+  ShowcaseTakeoffQueryInput,
+  ShowcaseTakeoffQueryResult,
+} from "@/lib/aps/showcase-query";
 import type {
   PromptRefinementOption,
   PromptRefinementSelection,
@@ -356,6 +367,226 @@ interface ShowcaseSelectionContextValue {
 
 const ShowcaseSelectionContext =
   createContext<ShowcaseSelectionContextValue | null>(null);
+
+const ALL_FILTER_OPTION = "__all__";
+
+function useBoundValue<T>(
+  bindingPath: string | undefined,
+  fallback: T | undefined,
+): T | undefined {
+  const { state } = useStateStore();
+
+  if (!bindingPath) {
+    return fallback;
+  }
+
+  return (getByPath(state, bindingPath) as T | undefined) ?? fallback;
+}
+
+function normalizeFilterArrayValue(value: unknown) {
+  if (Array.isArray(value)) {
+    const normalized = value
+      .filter((item): item is string => typeof item === "string")
+      .map((item) => item.trim())
+      .filter(Boolean)
+      .filter((item) => item !== ALL_FILTER_OPTION);
+
+    return normalized.length > 0 ? normalized : undefined;
+  }
+
+  if (typeof value !== "string") {
+    return undefined;
+  }
+
+  const normalized = value.trim();
+  if (!normalized || normalized === ALL_FILTER_OPTION) {
+    return undefined;
+  }
+
+  return [normalized];
+}
+
+function normalizeSearchValue(value: unknown) {
+  if (typeof value !== "string") {
+    return undefined;
+  }
+
+  const normalized = value.trim();
+  return normalized.length > 0 ? normalized : undefined;
+}
+
+function inferShowcaseFilterStatePath(label: unknown) {
+  if (typeof label !== "string") {
+    return undefined;
+  }
+
+  const normalized = label.trim().toLowerCase();
+  if (!normalized) {
+    return undefined;
+  }
+
+  if (normalized === "wall type" || normalized === "type") {
+    return "/ui/filters/types";
+  }
+
+  if (
+    normalized === "level"
+    || normalized === "base constraint"
+    || normalized === "reference level"
+  ) {
+    return "/ui/filters/levels";
+  }
+
+  if (
+    normalized === "material"
+    || normalized === "structural material"
+  ) {
+    return "/ui/filters/materials";
+  }
+
+  if (normalized === "family") {
+    return "/ui/filters/families";
+  }
+
+  if (normalized === "category") {
+    return "/ui/filters/categories";
+  }
+
+  if (normalized === "activity") {
+    return "/ui/filters/activities";
+  }
+
+  if (
+    normalized === "search"
+    || normalized === "search walls"
+    || normalized === "keyword search"
+  ) {
+    return "/ui/filters/search";
+  }
+
+  return undefined;
+}
+
+function buildShowcaseQueryFromUiFilters(
+  baseFilters: ShowcaseTakeoffQueryResult["filters"],
+  uiFilters: Record<string, unknown> | null | undefined,
+): ShowcaseTakeoffQueryInput {
+  return {
+    kinds: baseFilters.kinds,
+    categories:
+      normalizeFilterArrayValue(uiFilters?.categories) ?? baseFilters.categories,
+    families:
+      normalizeFilterArrayValue(uiFilters?.families) ?? baseFilters.families,
+    types: normalizeFilterArrayValue(uiFilters?.types) ?? baseFilters.types,
+    levels: normalizeFilterArrayValue(uiFilters?.levels) ?? baseFilters.levels,
+    materials:
+      normalizeFilterArrayValue(uiFilters?.materials) ?? baseFilters.materials,
+    activities:
+      normalizeFilterArrayValue(uiFilters?.activities) ?? baseFilters.activities,
+    search: normalizeSearchValue(uiFilters?.search) ?? baseFilters.search,
+    rowLimit: 20,
+    groupLimit: 10,
+    facetLimit: 200,
+    maxDbIdsForIsolation: 2500,
+  };
+}
+
+function ShowcaseFilterQuerySync() {
+  const analysis = useStateValue<ShowcaseTakeoffQueryResult>("/analysis");
+  const uiFilters = useStateValue<Record<string, unknown>>("/ui/filters");
+  const { set } = useStateStore();
+  const selection = useContext(ShowcaseSelectionContext);
+  const baseFiltersRef = useRef<ShowcaseTakeoffQueryResult["filters"] | null>(null);
+  const lastAppliedQueryKeyRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!baseFiltersRef.current && analysis?.filters) {
+      baseFiltersRef.current = analysis.filters;
+    }
+  }, [analysis]);
+
+  const baseFilters = baseFiltersRef.current ?? analysis?.filters ?? null;
+
+  const queryInput = useMemo(
+    () =>
+      baseFilters
+        ? buildShowcaseQueryFromUiFilters(baseFilters, uiFilters)
+        : null,
+    [baseFilters, uiFilters],
+  );
+  const queryKey = useMemo(
+    () => (queryInput ? JSON.stringify(queryInput) : null),
+    [queryInput],
+  );
+  const deferredQueryKey = useDeferredValue(queryKey);
+
+  useEffect(() => {
+    if (!queryKey || lastAppliedQueryKeyRef.current) {
+      return;
+    }
+
+    lastAppliedQueryKeyRef.current = queryKey;
+  }, [queryKey]);
+
+  useEffect(() => {
+    if (!deferredQueryKey || !queryInput) {
+      return;
+    }
+
+    if (lastAppliedQueryKeyRef.current === deferredQueryKey) {
+      return;
+    }
+
+    let cancelled = false;
+    const abortController = new AbortController();
+
+    const timeoutId = window.setTimeout(async () => {
+      try {
+        const response = await fetch("/api/aps/showcase/query", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(queryInput),
+          signal: abortController.signal,
+        });
+
+        if (!response.ok) {
+          throw new Error(await response.text());
+        }
+
+        const nextAnalysis =
+          (await response.json()) as ShowcaseTakeoffQueryResult;
+
+        if (cancelled) {
+          return;
+        }
+
+        lastAppliedQueryKeyRef.current = deferredQueryKey;
+        selection?.setSelectedDbIds([]);
+        selection?.setIsolatedDbIds(null);
+        set("/analysis", nextAnalysis);
+      } catch (error) {
+        if (cancelled || abortController.signal.aborted) {
+          return;
+        }
+
+        console.warn("[showcase][filters] failed to refresh analysis", {
+          error: error instanceof Error ? error.message : String(error),
+          query: queryInput,
+        });
+      }
+    }, 150);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timeoutId);
+      abortController.abort();
+    };
+  }, [deferredQueryKey, queryInput, selection, set]);
+
+  return null;
+}
 
 const ADD_CHART_OPTIONS: Array<{ kind: AddChartKind; label: string }> = [
   { kind: "BarChart", label: "Bar" },
@@ -968,14 +1199,19 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
       const applyInteraction = useShowcaseVisualInteraction();
       const pageSize = Math.max(1, props.pageSize ?? 25);
       const totalPages = Math.max(1, Math.ceil(items.length / pageSize));
+      const bindingPath = bindings?.page;
       const [boundPage, setBoundPage] = useBoundProp<string>(
         props.page as string | undefined,
-        bindings?.page,
+        bindingPath,
       );
       const [localPage, setLocalPage] = useState(props.page ?? "1");
-      const isBound = !!bindings?.page;
+      const isBound = !!bindingPath;
+      const currentBoundPage = useBoundValue<string>(bindingPath, boundPage);
       const rawPage = isBound ? boundPage ?? props.page ?? "1" : localPage;
-      const parsedPage = Number.parseInt(String(rawPage ?? "1"), 10);
+      const effectiveRawPage = isBound
+        ? currentBoundPage ?? props.page ?? "1"
+        : rawPage;
+      const parsedPage = Number.parseInt(String(effectiveRawPage ?? "1"), 10);
       const currentPage = Number.isFinite(parsedPage)
         ? Math.min(Math.max(parsedPage, 1), totalPages)
         : 1;
@@ -1184,6 +1420,7 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
             setIsolatedDbIds,
           }}
         >
+          <ShowcaseFilterQuerySync />
           <div className="flex w-full flex-col gap-5">
             {(props.title || props.description) && (
               <div className="space-y-1">
@@ -1609,16 +1846,18 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
       const renderMode = useContext(DashboardRenderModeContext);
       const currentSpec = useContext(CurrentSpecContext);
       const specMutator = useContext(SpecMutatorContext);
+      const bindingPath = bindings?.value;
       const [boundValue, setBoundValue] = useBoundProp<string>(
         props.value as string | undefined,
-        bindings?.value,
+        bindingPath,
       );
       const [localValue, setLocalValue] = useState(
         props.defaultValue ?? tabs[0]?.value ?? "",
       );
-      const isBound = !!bindings?.value;
+      const isBound = !!bindingPath;
+      const currentBoundValue = useBoundValue<string>(bindingPath, boundValue);
       const value = isBound
-        ? String(boundValue ?? props.defaultValue ?? tabs[0]?.value ?? "")
+        ? String(currentBoundValue ?? props.defaultValue ?? tabs[0]?.value ?? "")
         : localValue;
       const [addMenuOpen, setAddMenuOpen] = useState(false);
       const addMenuRef = useRef<HTMLDivElement>(null);
@@ -1767,13 +2006,17 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
 
     Pagination: ({ props, bindings, emit }) => {
       const totalPages = Math.max(1, props.totalPages ?? 1);
+      const bindingPath = bindings?.page;
       const [boundPage, setBoundPage] = useBoundProp<string>(
         props.page as string | undefined,
-        bindings?.page,
+        bindingPath,
       );
       const [localPage, setLocalPage] = useState(props.page ?? "1");
-      const isBound = !!bindings?.page;
-      const rawPage = isBound ? boundPage ?? props.page ?? "1" : localPage;
+      const isBound = !!bindingPath;
+      const currentBoundPage = useBoundValue<string>(bindingPath, boundPage);
+      const rawPage = isBound
+        ? currentBoundPage ?? props.page ?? "1"
+        : localPage;
       const parsedPage = Number.parseInt(String(rawPage ?? "1"), 10);
       const currentPage = Number.isFinite(parsedPage)
         ? Math.min(Math.max(parsedPage, 1), totalPages)
@@ -1991,11 +2234,12 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
     },
 
     RadioGroup: ({ props, bindings }) => {
+      const bindingPath = bindings?.value;
       const [value, setValue] = useBoundProp<string>(
         props.value as string | undefined,
-        bindings?.value,
+        bindingPath,
       );
-      const current = value ?? "";
+      const current = useBoundValue<string>(bindingPath, value) ?? "";
       const options = (props.options ?? []).filter(
         (opt) => opt.value.trim().length > 0,
       );
@@ -2026,22 +2270,44 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
     },
 
     SelectInput: ({ props, bindings }) => {
+      const statePath =
+        typeof (props as typeof props & { statePath?: unknown }).statePath === "string"
+          ? (props as typeof props & { statePath?: string }).statePath
+          : undefined;
+      const { set } = useStateStore();
+      const bindingPath =
+        bindings?.value
+        || statePath
+        || inferShowcaseFilterStatePath(props.label);
       const [value, setValue] = useBoundProp<string>(
         props.value as string | undefined,
-        bindings?.value,
+        bindingPath,
       );
+      const boundValue = useBoundValue<string>(bindingPath, value);
       const options = (props.options ?? []).filter(
         (opt) => opt.value.trim().length > 0,
       );
       const current =
-        value && options.some((opt) => opt.value === value) ? value : "";
+        boundValue && options.some((opt) => opt.value === boundValue)
+          ? boundValue
+          : options.some((opt) => opt.value === ALL_FILTER_OPTION)
+            ? ALL_FILTER_OPTION
+            : "";
+
+      const handleValueChange = (nextValue: string) => {
+        setValue(nextValue);
+
+        if (bindingPath) {
+          set(bindingPath, nextValue);
+        }
+      };
 
       return (
         <div className="flex flex-col gap-2">
           {props.label && (
             <Label className="text-sm font-medium">{props.label}</Label>
           )}
-          <Select value={current} onValueChange={(v: string) => setValue(v)}>
+          <Select value={current} onValueChange={handleValueChange}>
             <SelectTrigger>
               <SelectValue placeholder={props.placeholder ?? "Select..."} />
             </SelectTrigger>
@@ -2058,11 +2324,28 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
     },
 
     TextInput: ({ props, bindings }) => {
+      const statePath =
+        typeof (props as typeof props & { statePath?: unknown }).statePath === "string"
+          ? (props as typeof props & { statePath?: string }).statePath
+          : undefined;
+      const { set } = useStateStore();
+      const bindingPath =
+        bindings?.value
+        || statePath
+        || inferShowcaseFilterStatePath(props.label);
       const [value, setValue] = useBoundProp<string>(
         props.value as string | undefined,
-        bindings?.value,
+        bindingPath,
       );
-      const current = value ?? "";
+      const current = useBoundValue<string>(bindingPath, value) ?? "";
+
+      const handleChange = (nextValue: string) => {
+        setValue(nextValue);
+
+        if (bindingPath) {
+          set(bindingPath, nextValue);
+        }
+      };
 
       return (
         <div className="flex flex-col gap-2">
@@ -2073,7 +2356,7 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
             type={props.type ?? "text"}
             placeholder={props.placeholder ?? ""}
             value={current}
-            onChange={(e) => setValue(e.target.value)}
+            onChange={(e) => handleChange(e.target.value)}
           />
         </div>
       );
@@ -2093,6 +2376,13 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
     AutodeskViewer: ({ props }) => {
       const selection = useContext(ShowcaseSelectionContext);
       const renderMode = useContext(DashboardRenderModeContext);
+      const analysisIsolatedDbIds = useStateValue<number[] | null>(
+        "/analysis/viewer/isolatedDbIds",
+      );
+      const effectiveIsolatedDbIds =
+        selection?.isolatedDbIds && selection.isolatedDbIds.length > 0
+          ? selection.isolatedDbIds
+          : props.isolatedDbIds ?? analysisIsolatedDbIds;
 
       if (renderMode === "preview") {
         return (
@@ -2123,11 +2413,7 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
           theme={props.theme}
           showModelBrowser={props.showModelBrowser}
           fitToView={props.fitToView}
-          isolatedDbIds={
-            selection?.isolatedDbIds && selection.isolatedDbIds.length > 0
-              ? selection.isolatedDbIds
-              : props.isolatedDbIds
-          }
+          isolatedDbIds={effectiveIsolatedDbIds}
           selectedDbIds={
             selection && selection.selectedDbIds.length > 0
               ? selection.selectedDbIds

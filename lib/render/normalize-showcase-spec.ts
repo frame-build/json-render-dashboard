@@ -49,6 +49,55 @@ function isJsonLike(value: unknown): value is JsonLike {
   return !!value && typeof value === "object" && !Array.isArray(value);
 }
 
+function hasStatePathValue(state: JsonLike, path: string) {
+  const segments = path.split("/").filter(Boolean);
+  let current: unknown = state;
+
+  for (const segment of segments) {
+    if (!isJsonLike(current) || !(segment in current)) {
+      return false;
+    }
+
+    current = current[segment];
+  }
+
+  return true;
+}
+
+function withStatePathDefault(
+  state: JsonLike,
+  path: string,
+  value: unknown,
+): JsonLike {
+  if (hasStatePathValue(state, path)) {
+    return state;
+  }
+
+  const segments = path.split("/").filter(Boolean);
+  if (segments.length === 0) {
+    return state;
+  }
+
+  const nextState: JsonLike = { ...state };
+  let current: JsonLike = nextState;
+
+  for (const [index, segment] of segments.entries()) {
+    const isLeaf = index === segments.length - 1;
+
+    if (isLeaf) {
+      current[segment] = value;
+      continue;
+    }
+
+    const existing = current[segment];
+    const nextChild = isJsonLike(existing) ? { ...existing } : {};
+    current[segment] = nextChild;
+    current = nextChild;
+  }
+
+  return nextState;
+}
+
 function normalizeGroupingLabel(value: unknown) {
   return String(value ?? "").trim();
 }
@@ -476,18 +525,28 @@ function ensureViewerSection(spec: Spec) {
     for (const [key, element] of viewerEntries) {
       const currentUrn =
         typeof element.props?.urn === "string" ? element.props.urn.trim() : "";
+      const currentIsolatedDbIds = element.props?.isolatedDbIds;
+      const currentFitToView = element.props?.fitToView;
+      const nextProps = {
+        ...element.props,
+        urn: currentUrn || urn,
+        isolatedDbIds:
+          currentIsolatedDbIds ?? { $state: "/analysis/viewer/isolatedDbIds" },
+        fitToView: currentFitToView ?? true,
+      };
 
-      if (currentUrn) {
+      if (
+        currentUrn
+        && currentIsolatedDbIds !== undefined
+        && currentFitToView !== undefined
+      ) {
         continue;
       }
 
       changed = true;
       nextElements[key] = {
         ...element,
-        props: {
-          ...element.props,
-          urn,
-        },
+        props: nextProps,
       };
     }
 
@@ -695,6 +754,7 @@ function ensureMinimumFilterControls(
   minimumCount = MIN_FILTER_CONTROLS,
 ) {
   const nextElements: Spec["elements"] = { ...spec.elements };
+  let nextState = isJsonLike(spec.state) ? { ...spec.state } : {};
   let sectionKey = filterSectionKey;
 
   if (!sectionKey) {
@@ -724,6 +784,15 @@ function ensureMinimumFilterControls(
     const bindPath = getBindStatePath(element.props?.value);
     if (bindPath) {
       existingBindPaths.add(bindPath);
+      if (!("statePath" in (element.props ?? {}))) {
+        nextElements[key] = {
+          ...element,
+          props: {
+            ...element.props,
+            statePath: bindPath,
+          },
+        };
+      }
     }
     if (typeof element.props?.label === "string" && element.props.label.trim()) {
       existingLabels.add(normalizedToken(element.props.label));
@@ -762,21 +831,25 @@ function ensureMinimumFilterControls(
           type: "SelectInput",
           props: {
             label: candidate.label,
+            statePath: candidate.bindPath,
             value: { $bindState: candidate.bindPath },
             placeholder: candidate.placeholder ?? `All ${candidate.label}`,
             options,
           },
         };
+        nextState = withStatePathDefault(nextState, candidate.bindPath, "__all__");
       } else {
         nextElements[elementKey] = {
           type: "TextInput",
           props: {
             label: candidate.label,
+            statePath: candidate.bindPath,
             value: { $bindState: candidate.bindPath },
             placeholder: candidate.placeholder ?? "Type to filter...",
             type: "text",
           },
         };
+        nextState = withStatePathDefault(nextState, candidate.bindPath, "");
       }
 
       existingBindPaths.add(candidate.bindPath);
@@ -800,11 +873,13 @@ function ensureMinimumFilterControls(
       type: "TextInput",
       props: {
         label: `Filter ${fallbackIndex - 1}`,
+        statePath: bindPath,
         value: { $bindState: bindPath },
         placeholder: "Type to filter...",
         type: "text",
       },
     };
+    nextState = withStatePathDefault(nextState, bindPath, "");
 
     existingBindPaths.add(bindPath);
     addedFilterKeys.push(elementKey);
@@ -829,6 +904,7 @@ function ensureMinimumFilterControls(
       spec: {
         ...spec,
         elements: nextElements,
+        state: nextState,
       },
       filterSectionKey: sectionKey,
     };
@@ -885,6 +961,7 @@ function ensureMinimumFilterControls(
     spec: {
       ...spec,
       elements: nextElements,
+      state: nextState,
     },
     filterSectionKey: sectionKey,
   };

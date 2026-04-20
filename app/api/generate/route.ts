@@ -1,12 +1,15 @@
 import { agent } from "@/lib/agent";
 import {
+  assessPromptRefinement,
   buildPromptRefinementSpec,
   getLatestUserPrompt,
   getPromptRefinementSelection,
   type PromptRefinementAssessment,
 } from "@/lib/chat/prompt-refinement";
 import {
+  CHAT_STATUS_DATA_PART_TYPE,
   SPEC_DATA_PART_TYPE,
+  SHOWCASE_CONTEXT_DATA_PART_TYPE,
   type AppMessage,
 } from "@/lib/chat/types";
 import { minuteRateLimit, dailyRateLimit } from "@/lib/rate-limit";
@@ -17,6 +20,7 @@ import {
 } from "ai";
 import { pipeJsonRender } from "@json-render/core";
 import { headers } from "next/headers";
+import { getTakeoffShowcasePayload } from "@/lib/tools/takeoff-showcase";
 
 export const maxDuration = 60;
 
@@ -69,76 +73,54 @@ export async function POST(req: Request) {
     hasRefinementSelection: Boolean(refinementSelection),
   });
 
-  const modelMessages = await convertToModelMessages(uiMessages);
-  const stream = createUIMessageStream({
+  const stream = createUIMessageStream<AppMessage>({
     execute: async ({ writer }) => {
       writer.write({ type: "start" });
 
-      let refinementWritten = false;
-      const result = await agent.stream({
-        messages: modelMessages,
-        options: {
+      let assessment: PromptRefinementAssessment | null = null;
+
+      if (!refinementSelection) {
+        writer.write({
+          type: CHAT_STATUS_DATA_PART_TYPE,
+          data: {
+            phase: "prompt-assessment",
+            message: "Checking prompt...",
+          },
+          transient: true,
+        });
+
+        assessment = await assessPromptRefinement(latestPrompt);
+        console.info("[prompt-refinement][route] assessment-result", {
           latestPrompt,
-          skipPromptAssessment: Boolean(refinementSelection),
-        },
-        onStepFinish: async (step) => {
-          console.info("[prompt-refinement][route] step-finish", {
-            stepNumber: step.stepNumber,
-            toolNames: step.toolResults.map((toolResult) => toolResult.toolName),
-            finishReason: step.finishReason,
+          action: assessment.action,
+          reason: assessment.reason,
+          hasRefinementPayload: Boolean(assessment.refinement),
+        });
+
+        const textId = "prompt-refinement";
+
+        if (assessment.action === "irrelevant") {
+          writer.write({ type: "text-start", id: textId });
+          writer.write({
+            type: "text-delta",
+            id: textId,
+            delta:
+              "This app is focused on APS showcase dashboards. Try a BIM prompt like 'Build a Walls dashboard with the Autodesk viewer, filters, KPIs, charts, and a schedule.'",
           });
+          writer.write({ type: "text-end", id: textId });
+          return;
+        }
 
-          if (refinementWritten) {
-            return;
-          }
-
-          const assessment = step.toolResults.find(
-            (toolResult) => toolResult.toolName === "assessPromptRefinement",
-          );
-
-          if (!assessment) {
-            return;
-          }
-
-          const output = assessment.output as PromptRefinementAssessment | undefined;
-          console.info("[prompt-refinement][route] assessment-result", {
-            latestPrompt,
-            action: output?.action ?? null,
-            reason: output?.reason ?? null,
-            hasRefinementPayload: Boolean(output?.refinement),
-          });
-          if (output?.action === "generate") {
-            return;
-          }
-
-          const textId = "prompt-refinement";
-
-          if (output?.action === "irrelevant") {
-            writer.write({ type: "text-start", id: textId });
-            writer.write({
-              type: "text-delta",
-              id: textId,
-              delta:
-                "This app is focused on APS showcase dashboards. Try a BIM prompt like 'Build a Walls dashboard with the Autodesk viewer, filters, KPIs, charts, and a schedule.'",
-            });
-            writer.write({ type: "text-end", id: textId });
-            refinementWritten = true;
-            return;
-          }
-
-          if (!output?.refinement) {
-            return;
-          }
-
+        if (assessment.action === "refine" && assessment.refinement) {
           const spec = buildPromptRefinementSpec(
-            output.refinement,
+            assessment.refinement,
             latestPrompt,
             true,
           );
           console.info("[prompt-refinement][route] writing-selector", {
             latestPrompt,
-            action: output.action,
-            optionCount: output.refinement.options.length,
+            action: assessment.action,
+            optionCount: assessment.refinement.options.length,
           });
           writer.write({ type: "text-start", id: textId });
           writer.write({
@@ -155,7 +137,49 @@ export async function POST(req: Request) {
               spec,
             },
           });
-          refinementWritten = true;
+          return;
+        }
+      }
+
+      writer.write({
+        type: CHAT_STATUS_DATA_PART_TYPE,
+        data: {
+          phase: "dashboard-generation",
+          message: "Building dashboard...",
+        },
+        transient: true,
+      });
+
+      const showcasePayload = getTakeoffShowcasePayload();
+      if ("error" in showcasePayload) {
+        const errorId = "showcase-context-error";
+        writer.write({ type: "text-start", id: errorId });
+        writer.write({
+          type: "text-delta",
+          id: errorId,
+          delta: showcasePayload.error,
+        });
+        writer.write({ type: "text-end", id: errorId });
+        return;
+      }
+
+      writer.write({
+        type: SHOWCASE_CONTEXT_DATA_PART_TYPE,
+        data: showcasePayload,
+      });
+
+      const modelMessages = await convertToModelMessages(uiMessages);
+      const result = await agent.stream({
+        messages: modelMessages,
+        options: {
+          showcaseContext: JSON.stringify(showcasePayload),
+        },
+        onStepFinish: async (step) => {
+          console.info("[dashboard-generation][route] step-finish", {
+            stepNumber: step.stepNumber,
+            toolNames: step.toolResults.map((toolResult) => toolResult.toolName),
+            finishReason: step.finishReason,
+          });
         },
       });
 

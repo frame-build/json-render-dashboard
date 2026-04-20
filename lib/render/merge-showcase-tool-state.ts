@@ -4,6 +4,7 @@ interface ToolPartLike {
   type: string;
   state?: string;
   output?: unknown;
+  data?: unknown;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -15,6 +16,11 @@ function extractCanonicalShowcaseState(parts: ToolPartLike[]) {
   let analysis: unknown;
 
   for (const part of parts) {
+    if (part.type === "data-showcaseContext" && part.data !== undefined) {
+      showcase = part.data;
+      continue;
+    }
+
     if (!part.type.startsWith("tool-") || part.state !== "output-available") {
       continue;
     }
