@@ -342,7 +342,13 @@ function ShowcaseShellSlot({
             )}
           </div>
         )}
-        <div className={forceFillChild ? "h-full min-h-0 [&>*]:h-full" : undefined}>
+        <div
+          className={
+            forceFillChild
+              ? "h-full min-h-0 w-full min-w-0 max-w-full overflow-hidden [&>*]:h-full [&>*]:w-full [&>*]:min-w-0 [&>*]:max-w-full"
+              : "min-w-0"
+          }
+        >
           {child}
         </div>
       </div>
@@ -467,6 +473,36 @@ function inferShowcaseFilterStatePath(label: unknown) {
   return undefined;
 }
 
+function normalizeLegacyFilterState(
+  legacyFilters: Record<string, unknown> | null | undefined,
+) {
+  if (!legacyFilters) {
+    return null;
+  }
+
+  const normalized: Record<string, unknown> = {};
+  const mappings: Array<[string, string]> = [
+    ["category", "categories"],
+    ["family", "families"],
+    ["type", "types"],
+    ["level", "levels"],
+    ["material", "materials"],
+    ["activity", "activities"],
+  ];
+
+  for (const [legacyKey, uiKey] of mappings) {
+    if (legacyFilters[legacyKey] !== undefined) {
+      normalized[uiKey] = legacyFilters[legacyKey];
+    }
+  }
+
+  if (legacyFilters.search !== undefined) {
+    normalized.search = legacyFilters.search;
+  }
+
+  return normalized;
+}
+
 function buildShowcaseQueryFromUiFilters(
   baseFilters: ShowcaseTakeoffQueryResult["filters"],
   uiFilters: Record<string, unknown> | null | undefined,
@@ -494,6 +530,7 @@ function buildShowcaseQueryFromUiFilters(
 function ShowcaseFilterQuerySync() {
   const analysis = useStateValue<ShowcaseTakeoffQueryResult>("/analysis");
   const uiFilters = useStateValue<Record<string, unknown>>("/ui/filters");
+  const legacyFilters = useStateValue<Record<string, unknown>>("/filters");
   const { set } = useStateStore();
   const selection = useContext(ShowcaseSelectionContext);
   const baseFiltersRef = useRef<ShowcaseTakeoffQueryResult["filters"] | null>(null);
@@ -506,13 +543,20 @@ function ShowcaseFilterQuerySync() {
   }, [analysis]);
 
   const baseFilters = baseFiltersRef.current ?? analysis?.filters ?? null;
+  const effectiveFilters = useMemo(
+    () => ({
+      ...(normalizeLegacyFilterState(legacyFilters) ?? {}),
+      ...(uiFilters ?? {}),
+    }),
+    [legacyFilters, uiFilters],
+  );
 
   const queryInput = useMemo(
     () =>
       baseFilters
-        ? buildShowcaseQueryFromUiFilters(baseFilters, uiFilters)
+        ? buildShowcaseQueryFromUiFilters(baseFilters, effectiveFilters)
         : null,
-    [baseFilters, uiFilters],
+    [baseFilters, effectiveFilters],
   );
   const queryKey = useMemo(
     () => (queryInput ? JSON.stringify(queryInput) : null),
@@ -593,6 +637,51 @@ const ADD_CHART_OPTIONS: Array<{ kind: AddChartKind; label: string }> = [
   { kind: "LineChart", label: "Line" },
   { kind: "PieChart", label: "Pie" },
 ];
+
+function normalizeSelectOptions(
+  rawOptions: unknown,
+  placeholder: string | null | undefined,
+) {
+  const source = Array.isArray(rawOptions) ? rawOptions : [];
+  const options = source
+    .map((option): { value: string; label: string } | null => {
+      if (typeof option === "string") {
+        const value = option.trim();
+        return value ? { value, label: value } : null;
+      }
+
+      if (!option || typeof option !== "object") {
+        return null;
+      }
+
+      const record = option as Record<string, unknown>;
+      if (typeof record.value !== "string") {
+        return null;
+      }
+
+      const value = record.value.trim();
+      if (!value) {
+        return null;
+      }
+
+      const label =
+        typeof record.label === "string" && record.label.trim()
+          ? record.label.trim()
+          : value;
+
+      return { value, label };
+    })
+    .filter((option): option is { value: string; label: string } => Boolean(option));
+
+  if (
+    placeholder &&
+    !options.some((option) => option.value === ALL_FILTER_OPTION)
+  ) {
+    return [{ value: ALL_FILTER_OPTION, label: placeholder }, ...options];
+  }
+
+  return options;
+}
 
 function formatSelectionQuantity(value: number | null | undefined) {
   if (value == null) return null;
@@ -763,7 +852,7 @@ function useShowcaseVisualInteraction() {
   return useCallback(
     (
       item: Record<string, unknown> | null | undefined,
-      mode: "select" | "isolate" = "isolate",
+      mode: "select" | "isolate" | "isolate-only" = "isolate",
     ) => {
       if (!selection || !item) {
         return;
@@ -788,6 +877,18 @@ function useShowcaseVisualInteraction() {
 
         selection.setSelectedDbIds(focused);
         selection.setIsolatedDbIds(focused);
+        return;
+      }
+
+      if (mode === "isolate-only") {
+        if (sameDbIdSet(selection.isolatedDbIds, dbIds)) {
+          selection.setSelectedDbIds([]);
+          selection.setIsolatedDbIds(null);
+          return;
+        }
+
+        selection.setSelectedDbIds([]);
+        selection.setIsolatedDbIds(dbIds);
         return;
       }
 
@@ -1311,7 +1412,7 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
                         onClick={() =>
                           applyInteraction(
                             item,
-                            typeof item.dbId === "number" ? "select" : "isolate",
+                            "isolate-only",
                           )
                         }
                       >
@@ -1639,7 +1740,7 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
                   onClick={() =>
                     applyInteraction(
                       item,
-                      typeof item.dbId === "number" ? "select" : "isolate",
+                      "isolate-only",
                     )
                   }
                 >
@@ -1891,6 +1992,12 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
         currentSpec && sectionKey
           ? getChartSectionEditorState(currentSpec, sectionKey, value)
           : { hasTabs: false, tabCount: 0, activeChartType: null };
+      const shouldCollapseWrapperTabs =
+        !sectionKey && tabs.length > 1 && Children.count(children) === 1;
+
+      if (shouldCollapseWrapperTabs) {
+        return <>{children}</>;
+      }
 
       return (
         <TabsValueContext.Provider value={value}>
@@ -2240,9 +2347,7 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
         bindingPath,
       );
       const current = useBoundValue<string>(bindingPath, value) ?? "";
-      const options = (props.options ?? []).filter(
-        (opt) => opt.value.trim().length > 0,
-      );
+      const options = normalizeSelectOptions(props.options, null);
 
       return (
         <div className="flex flex-col gap-2">
@@ -2284,9 +2389,7 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
         bindingPath,
       );
       const boundValue = useBoundValue<string>(bindingPath, value);
-      const options = (props.options ?? []).filter(
-        (opt) => opt.value.trim().length > 0,
-      );
+      const options = normalizeSelectOptions(props.options, props.placeholder);
       const current =
         boundValue && options.some((opt) => opt.value === boundValue)
           ? boundValue

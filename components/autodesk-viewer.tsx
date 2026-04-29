@@ -547,7 +547,15 @@ export function AutodeskViewer({
   return (
     <div
       className="relative min-h-0 w-full overflow-hidden rounded-lg border bg-card"
-      style={{ height: resolvedHeight, width: "100%" }}
+      style={{
+        contain: "layout paint",
+        flex: `0 0 ${resolvedHeight}`,
+        height: resolvedHeight,
+        maxHeight: resolvedHeight,
+        maxWidth: "100%",
+        minHeight: resolvedHeight,
+        width: "100%",
+      }}
     >
       <div ref={containerRef} className="h-full w-full" />
 

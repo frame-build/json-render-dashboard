@@ -251,6 +251,77 @@ const PROMPT_TRIAGE_EXAMPLES = [
   },
 ];
 
+const GENERATION_READY_PATTERNS = {
+  dashboardIntent: /\b(dashboard|takeoff|estimate|estimating)\b/i,
+  viewer: /\b(autodesk viewer|viewer|3d)\b/i,
+  filters: /\b(filters?|slicers?|search|keyword search)\b/i,
+  metrics: /\b(kpis?|metrics?|count|length|area|volume|quantity|quantities)\b/i,
+  visuals: /\b(charts?|breakdowns?|grouped by|by type|by family|by level|by material|by category|by constraint)\b/i,
+  detailTable: /\b(schedule|table|details?|rows?)\b/i,
+};
+
+const SUPPORTED_PROMPT_SUBJECTS = new Set(
+  [
+    ...TOP_CATEGORIES,
+    ...TOP_FAMILIES,
+    "autodesk",
+    "showcase",
+    "aps",
+    "bim",
+    "wall",
+    "walls",
+    "floor",
+    "floors",
+    "duct",
+    "ducts",
+    "fitting",
+    "fittings",
+    "support",
+    "supports",
+    "window",
+    "windows",
+    "door",
+    "doors",
+    "framing",
+    "frame",
+    "joist",
+    "beam",
+    "steel",
+    "foundation",
+    "foundations",
+    "column",
+    "columns",
+  ]
+    .flatMap((value) => value.toLowerCase().split(/[^a-z0-9]+/))
+    .filter(Boolean),
+);
+
+function hasSupportedPromptSubject(prompt: string) {
+  return prompt
+    .toLowerCase()
+    .split(/[^a-z0-9]+/)
+    .some((token) => SUPPORTED_PROMPT_SUBJECTS.has(token));
+}
+
+function getGenerationReadyReason(prompt: string) {
+  const wordCount = prompt.split(/\s+/).filter(Boolean).length;
+
+  if (
+    wordCount >= 14 &&
+    hasSupportedPromptSubject(prompt) &&
+    GENERATION_READY_PATTERNS.dashboardIntent.test(prompt) &&
+    GENERATION_READY_PATTERNS.viewer.test(prompt) &&
+    GENERATION_READY_PATTERNS.filters.test(prompt) &&
+    GENERATION_READY_PATTERNS.metrics.test(prompt) &&
+    GENERATION_READY_PATTERNS.visuals.test(prompt) &&
+    GENERATION_READY_PATTERNS.detailTable.test(prompt)
+  ) {
+    return "Prompt already includes dashboard intent, BIM/showcase scope, viewer, filters, metrics, charts, and a schedule/table.";
+  }
+
+  return null;
+}
+
 const PromptRefinementSchema = z.object({
   title: z.string(),
   description: z.string(),
@@ -358,6 +429,21 @@ export async function assessPromptRefinement(
     };
   }
 
+  const generationReadyReason = getGenerationReadyReason(normalizedPrompt);
+  if (generationReadyReason) {
+    console.info("[prompt-refinement][assessment]", {
+      prompt: normalizedPrompt,
+      action: "generate",
+      reason: generationReadyReason,
+      optionCount: 0,
+    });
+    return {
+      action: "generate",
+      reason: generationReadyReason,
+      refinement: null,
+    };
+  }
+
   try {
     const { output } = await generateText({
       model: gateway(refinementModelId),
@@ -377,6 +463,7 @@ export async function assessPromptRefinement(
         "- Greetings or chat prompts like 'hello', 'how are you', or unrelated questions should be irrelevant.",
         "- Prompts that do not clearly request filters, KPIs/metrics, charts/groupings, or tables/schedules should usually refine.",
         "- Prompts that already specify dashboard intent plus meaningful analysis structure should generate.",
+        "- Do not refine a prompt just because a filter label is generic or slightly different from the category guide when it already asks for viewer, filters, KPIs/metrics, charts, and a schedule/table.",
         "- When action is 'refine', provide 3 to 5 prompt options grounded in the showcase dataset.",
         "- When action is 'irrelevant', do not suggest a dashboard UI. Just explain briefly that this app is for APS showcase dashboards.",
         "- Use category-specific filter language from the guide below instead of forcing generic Level or Material filters everywhere.",
