@@ -421,7 +421,7 @@ function normalizeSearchValue(value: unknown) {
   return normalized.length > 0 ? normalized : undefined;
 }
 
-function inferShowcaseFilterStatePath(label: unknown) {
+function inferShowcaseFilterSelectionStatePath(label: unknown) {
   if (typeof label !== "string") {
     return undefined;
   }
@@ -432,7 +432,7 @@ function inferShowcaseFilterStatePath(label: unknown) {
   }
 
   if (normalized === "wall type" || normalized === "type") {
-    return "/ui/filters/types";
+    return "/ui/filterValues/types";
   }
 
   if (
@@ -440,26 +440,26 @@ function inferShowcaseFilterStatePath(label: unknown) {
     || normalized === "base constraint"
     || normalized === "reference level"
   ) {
-    return "/ui/filters/levels";
+    return "/ui/filterValues/levels";
   }
 
   if (
     normalized === "material"
     || normalized === "structural material"
   ) {
-    return "/ui/filters/materials";
+    return "/ui/filterValues/materials";
   }
 
   if (normalized === "family") {
-    return "/ui/filters/families";
+    return "/ui/filterValues/families";
   }
 
   if (normalized === "category") {
-    return "/ui/filters/categories";
+    return "/ui/filterValues/categories";
   }
 
   if (normalized === "activity") {
-    return "/ui/filters/activities";
+    return "/ui/filterValues/activities";
   }
 
   if (
@@ -467,7 +467,7 @@ function inferShowcaseFilterStatePath(label: unknown) {
     || normalized === "search walls"
     || normalized === "keyword search"
   ) {
-    return "/ui/filters/search";
+    return "/ui/filterValues/search";
   }
 
   return undefined;
@@ -530,6 +530,7 @@ function buildShowcaseQueryFromUiFilters(
 function ShowcaseFilterQuerySync() {
   const analysis = useStateValue<ShowcaseTakeoffQueryResult>("/analysis");
   const uiFilters = useStateValue<Record<string, unknown>>("/ui/filters");
+  const uiFilterValues = useStateValue<Record<string, unknown>>("/ui/filterValues");
   const legacyFilters = useStateValue<Record<string, unknown>>("/filters");
   const { set } = useStateStore();
   const selection = useContext(ShowcaseSelectionContext);
@@ -547,8 +548,9 @@ function ShowcaseFilterQuerySync() {
     () => ({
       ...(normalizeLegacyFilterState(legacyFilters) ?? {}),
       ...(uiFilters ?? {}),
+      ...(uiFilterValues ?? {}),
     }),
-    [legacyFilters, uiFilters],
+    [legacyFilters, uiFilters, uiFilterValues],
   );
 
   const queryInput = useMemo(
@@ -2383,7 +2385,7 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
       const bindingPath =
         bindings?.value
         || statePath
-        || inferShowcaseFilterStatePath(props.label);
+        || inferShowcaseFilterSelectionStatePath(props.label);
       const [value, setValue] = useBoundProp<string>(
         props.value as string | undefined,
         bindingPath,
@@ -2435,7 +2437,7 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
       const bindingPath =
         bindings?.value
         || statePath
-        || inferShowcaseFilterStatePath(props.label);
+        || inferShowcaseFilterSelectionStatePath(props.label);
       const [value, setValue] = useBoundProp<string>(
         props.value as string | undefined,
         bindingPath,
