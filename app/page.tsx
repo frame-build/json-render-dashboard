@@ -11,6 +11,7 @@ import { DashboardSpecRenderer } from "@/lib/render/renderer";
 import { mergeShowcaseToolStateIntoSpec } from "@/lib/render/merge-showcase-tool-state";
 import { APP_DISPLAY_NAME } from "@/lib/dashboard-naming";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   CHAT_STATUS_DATA_PART_TYPE,
   PROMPT_REFINEMENT_DATA_PART_TYPE,
@@ -154,6 +155,95 @@ function ToolCallDisplay({
 // =============================================================================
 // Message Bubble
 // =============================================================================
+
+function ChatLoadingIndicator({ label }: { label: string }) {
+  return (
+    <div className="max-w-xl rounded-lg border border-border/60 bg-card/70 px-3 py-2.5 shadow-sm">
+      <div className="mb-2 flex items-center gap-2 text-sm text-muted-foreground">
+        <Loader2 className="h-4 w-4 animate-spin text-primary" />
+        <span className="animate-shimmer">{label}</span>
+      </div>
+      <div className="space-y-2">
+        <Skeleton className="h-3 w-5/6" />
+        <Skeleton className="h-3 w-2/3" />
+      </div>
+    </div>
+  );
+}
+
+function DashboardPreviewSkeleton({ label }: { label: string }) {
+  return (
+    <div className="rounded-lg border border-border/60 bg-background p-3">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Loader2 className="h-4 w-4 animate-spin text-primary" />
+          <span>{label}</span>
+        </div>
+        <Skeleton className="h-7 w-28 rounded-full" />
+      </div>
+
+      <div className="flex flex-col gap-4">
+        <div className="rounded-lg border border-border/40 bg-card/50 p-4">
+          <Skeleton className="mb-3 h-5 w-56" />
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, index) => (
+              <div
+                key={index}
+                className="rounded-md border border-border/40 bg-background/70 p-3"
+              >
+                <Skeleton className="mb-3 h-3 w-20" />
+                <Skeleton className="h-7 w-24" />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="grid gap-4 xl:grid-cols-12">
+          <div className="rounded-lg border border-border/40 bg-card/50 p-4 xl:col-span-7">
+            <div className="mb-4 flex items-center justify-between">
+              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-7 w-24 rounded-full" />
+            </div>
+            <Skeleton className="h-[27rem] w-full" />
+          </div>
+
+          <div className="grid gap-4 xl:col-span-5">
+            <div className="rounded-lg border border-border/40 bg-card/50 p-4">
+              <Skeleton className="mb-4 h-4 w-40" />
+              <Skeleton className="mb-3 h-44 w-full" />
+              <div className="flex gap-2">
+                <Skeleton className="h-3 w-16" />
+                <Skeleton className="h-3 w-20" />
+                <Skeleton className="h-3 w-14" />
+              </div>
+            </div>
+            <div className="rounded-lg border border-border/40 bg-card/50 p-4">
+              <Skeleton className="mb-4 h-4 w-36" />
+              <div className="space-y-3">
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <Skeleton key={index} className="h-8 w-full" />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-lg border border-border/40 bg-card/50 p-4 xl:col-span-6">
+            <Skeleton className="mb-4 h-4 w-44" />
+            <Skeleton className="h-48 w-full" />
+          </div>
+          <div className="rounded-lg border border-border/40 bg-card/50 p-4 xl:col-span-6">
+            <Skeleton className="mb-4 h-4 w-40" />
+            <div className="space-y-3">
+              {Array.from({ length: 6 }).map((_, index) => (
+                <Skeleton key={index} className="h-7 w-full" />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function MessageBubble({
   message,
@@ -412,23 +502,12 @@ function MessageBubble({
         </div>
 
         <div className="relative overflow-hidden rounded-[1.75rem]">
-<div className="max-h-[34rem] overflow-hidden">
+          <div className="max-h-[34rem] overflow-hidden">
             {showPreviewSkeleton ? (
-               <div className="rounded-lg border border-border/60 bg-background p-3">
-                 <div className="flex flex-col gap-4">
-                   <div className="h-16 rounded-lg border border-border/40 bg-card/50" />
-                   <div className="grid gap-4 xl:grid-cols-12">
-                     <div className="rounded-lg border border-border/40 bg-card/50 xl:col-span-7 xl:min-h-[34rem]" />
-                     <div className="grid gap-4 xl:col-span-5">
-                       <div className="rounded-lg border border-border/40 bg-card/50 min-h-[18rem]" />
-                       <div className="rounded-lg border border-border/40 bg-card/50 min-h-[18rem]" />
-                     </div>
-                     <div className="rounded-lg border border-border/40 bg-card/50 xl:col-span-6 xl:min-h-[20rem]" />
-                     <div className="rounded-lg border border-border/40 bg-card/50 xl:col-span-6 xl:min-h-[20rem]" />
-                   </div>
-                 </div>
-               </div>
-             ) : (
+              <DashboardPreviewSkeleton
+                label={streamingStatus ?? "Building dashboard preview..."}
+              />
+            ) : (
               <DashboardSpecRenderer
                 spec={spec}
                 loading={false}
@@ -460,9 +539,7 @@ function MessageBubble({
         {renderSpec()}
 
         {showLoader && (
-          <div className="text-sm text-muted-foreground animate-shimmer">
-            {loaderLabel}
-          </div>
+          <ChatLoadingIndicator label={loaderLabel} />
         )}
       </div>
     );
@@ -505,11 +582,7 @@ function MessageBubble({
       })}
 
       {/* Loading indicator */}
-      {showLoader && (
-        <div className="text-sm text-muted-foreground animate-shimmer">
-          {loaderLabel}
-        </div>
-      )}
+      {showLoader && <ChatLoadingIndicator label={loaderLabel} />}
 
       {/* Fallback: render spec at end if no inline position was found */}
       {showSpecAtEnd && <div>{renderSpec()}</div>}

@@ -1259,6 +1259,7 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
     Accordion: shadcnComponents.Accordion,
     Progress: shadcnComponents.Progress,
     Skeleton: shadcnComponents.Skeleton,
+    Spinner: shadcnComponents.Spinner,
     Badge: shadcnComponents.Badge,
     Alert: shadcnComponents.Alert,
 
@@ -1326,6 +1327,7 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
           .filter((col) => columnLooksNumeric(items, col.key))
           .map((col) => col.key),
       );
+      const tableMinWidth = `${Math.max(56, props.columns.length * 10)}rem`;
 
       const setPage = (page: number) => {
         const nextPage = String(Math.min(Math.max(page, 1), totalPages));
@@ -1348,7 +1350,7 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
       };
 
       return (
-        <div className="flex h-full min-h-0 flex-col gap-3">
+        <div className="flex min-h-0 flex-col gap-3 rounded-lg border border-border/60 bg-card p-4">
           {(props.title || props.description) && (
             <div className="space-y-0.5">
               {props.title ? (
@@ -1372,7 +1374,7 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
               </div>
 
               <div className="overflow-hidden rounded-md border border-border/60">
-                <Table>
+                <Table style={{ minWidth: tableMinWidth }}>
                   <TableHeader>
                     <TableRow>
                       {props.columns.map((col) => {
@@ -1550,17 +1552,16 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
               className="min-w-0"
             />
 
-            <div className="grid gap-5 lg:grid-cols-12">
-              <div className="grid min-w-0 gap-5 lg:col-span-7">
+            <div className="grid items-start gap-5 lg:grid-cols-12">
+              <div className="grid min-w-0 content-start gap-5 lg:col-span-7">
                 <ShowcaseShellSlot
                   child={viewer}
                   emptyLabel="Viewer panel is required for every showcase dashboard."
                   className="min-w-0 min-h-[28rem] lg:min-h-[34rem]"
-                  forceFillChild
                 />
                 {renderMode === "full" ? <ShowcaseSelectionInspector /> : null}
               </div>
-              <div className="grid min-w-0 gap-5 lg:col-span-5">
+              <div className="grid min-w-0 content-start gap-5 lg:col-span-5">
                 <ShowcaseShellSlot
                   child={analyticsPrimary}
                   emptyLabel="Primary analysis panel."
@@ -1597,36 +1598,36 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
                       : undefined
                   }
                 />
-                {detailSecondary ? (
-                  <ShowcaseShellSlot
-                    child={detailSecondary}
-                    emptyLabel="Grouped summary panel."
-                    className="min-w-0 lg:min-h-[14rem]"
-                  />
-                ) : null}
               </div>
-              <ShowcaseShellSlot
-                child={detailPrimary}
-                emptyLabel="Detail table or schedule."
-                className={`min-w-0 lg:min-h-[20rem] ${detailSecondary ? "lg:col-span-12" : "lg:col-span-6"}`}
-              />
-              {!detailSecondary ? (
+            </div>
+
+            {(detailPrimary || detailSecondary) && (
+              <div className="grid min-w-0 items-start gap-5">
+                <ShowcaseShellSlot
+                  child={detailPrimary}
+                  emptyLabel="Detail table or schedule."
+                  className="min-w-0"
+                />
                 <ShowcaseShellSlot
                   child={detailSecondary}
-                  emptyLabel="Additional detail panel."
-                  className="min-w-0 lg:col-span-6 lg:min-h-[20rem]"
+                  emptyLabel="Grouped summary panel."
+                  className="min-w-0"
                 />
-              ) : null}
+              </div>
+            )}
 
-              {extraWidgets.map((widget, index) => (
-                <ShowcaseShellSlot
-                  key={`extra-widget-${index}`}
-                  child={widget}
-                  emptyLabel="Additional visual."
-                  className="min-w-0 lg:col-span-6 lg:min-h-[18rem]"
-                />
-              ))}
-            </div>
+            {extraWidgets.length > 0 ? (
+              <div className="grid items-start gap-5 lg:grid-cols-12">
+                {extraWidgets.map((widget, index) => (
+                  <ShowcaseShellSlot
+                    key={`extra-widget-${index}`}
+                    child={widget}
+                    emptyLabel="Additional visual."
+                    className="min-w-0 lg:col-span-6"
+                  />
+                ))}
+              </div>
+            ) : null}
           </div>
         </ShowcaseSelectionContext.Provider>
       );
@@ -1676,7 +1677,7 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
 
       if (items.length === 0) {
         return (
-          <div className="py-4 text-center text-sm text-muted-foreground">
+          <div className="rounded-lg border border-border/60 bg-card px-4 py-8 text-center text-sm text-muted-foreground">
             {props.emptyMessage ?? "No data"}
           </div>
         );
@@ -1688,6 +1689,7 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
           .filter((col) => columnLooksNumeric(items, col.key))
           .map((col) => col.key),
       );
+      const tableMinWidth = `${Math.max(56, props.columns.length * 10)}rem`;
 
       const handleSort = (key: string) => {
         if (sortKey === key) {
@@ -1699,65 +1701,67 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
       };
 
       return (
-        <div className="overflow-hidden rounded-md border border-border/60">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                {props.columns.map((col) => {
-                  const SortIcon =
-                    sortKey === col.key
-                      ? sortDir === "asc"
-                        ? ArrowUp
-                        : ArrowDown
-                      : ArrowUpDown;
-                  return (
-                    <TableHead
-                      key={col.key}
-                      className={numericColumns.has(col.key) ? "text-right" : undefined}
-                    >
-                      <button
-                        type="button"
-                        className={`inline-flex items-center gap-1 transition-colors hover:text-foreground ${
-                          numericColumns.has(col.key) ? "ml-auto flex" : ""
-                        }`}
-                        onClick={() => handleSort(col.key)}
+        <div className="rounded-lg border border-border/60 bg-card p-4">
+          <div className="overflow-hidden rounded-md border border-border/60">
+            <Table style={{ minWidth: tableMinWidth }}>
+              <TableHeader>
+                <TableRow>
+                  {props.columns.map((col) => {
+                    const SortIcon =
+                      sortKey === col.key
+                        ? sortDir === "asc"
+                          ? ArrowUp
+                          : ArrowDown
+                        : ArrowUpDown;
+                    return (
+                      <TableHead
+                        key={col.key}
+                        className={numericColumns.has(col.key) ? "text-right" : undefined}
                       >
-                        {col.label}
-                        <SortIcon className="h-3 w-3 text-muted-foreground" />
-                      </button>
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {sorted.map((item, i) => (
-                <TableRow
-                  key={i}
-                  className={
-                    extractInteractiveDbIds(item).length > 0
-                      ? "cursor-pointer hover:bg-muted/30"
-                      : undefined
-                  }
-                  onClick={() =>
-                    applyInteraction(
-                      item,
-                      "isolate-only",
-                    )
-                  }
-                >
-                  {props.columns.map((col) => (
-                    <TableCell
-                      key={col.key}
-                      className={numericColumns.has(col.key) ? "text-right tabular-nums" : undefined}
-                    >
-                      {formatTableCellValue(item[col.key])}
-                    </TableCell>
-                  ))}
+                        <button
+                          type="button"
+                          className={`inline-flex items-center gap-1 transition-colors hover:text-foreground ${
+                            numericColumns.has(col.key) ? "ml-auto flex" : ""
+                          }`}
+                          onClick={() => handleSort(col.key)}
+                        >
+                          {col.label}
+                          <SortIcon className="h-3 w-3 text-muted-foreground" />
+                        </button>
+                      </TableHead>
+                    );
+                  })}
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {sorted.map((item, i) => (
+                  <TableRow
+                    key={i}
+                    className={
+                      extractInteractiveDbIds(item).length > 0
+                        ? "cursor-pointer hover:bg-muted/30"
+                        : undefined
+                    }
+                    onClick={() =>
+                      applyInteraction(
+                        item,
+                        "isolate-only",
+                      )
+                    }
+                  >
+                    {props.columns.map((col) => (
+                      <TableCell
+                        key={col.key}
+                        className={numericColumns.has(col.key) ? "text-right tabular-nums" : undefined}
+                      >
+                        {formatTableCellValue(item[col.key])}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </div>
       );
     },
@@ -1818,7 +1822,7 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
       }
 
       return (
-        <div className="flex min-h-0 w-full flex-col">
+        <div className="flex min-h-0 w-full min-w-0 flex-col">
           {props.title && (
             <p className="text-sm font-medium mb-2">{props.title}</p>
           )}
@@ -1830,6 +1834,7 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
             <RechartsBarChart
               accessibilityLayer
               data={items}
+              margin={{ top: 8, right: 16, bottom: 8, left: 8 }}
             >
               <CartesianGrid vertical={false} />
               <XAxis
@@ -1899,7 +1904,7 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
       }
 
       return (
-        <div className="flex min-h-0 w-full flex-col">
+        <div className="flex min-h-0 w-full min-w-0 flex-col">
           {props.title && (
             <p className="text-sm font-medium mb-2">{props.title}</p>
           )}
@@ -1911,6 +1916,7 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
             <RechartsLineChart
               accessibilityLayer
               data={items}
+              margin={{ top: 8, right: 16, bottom: 8, left: 8 }}
             >
               <CartesianGrid vertical={false} />
               <XAxis
@@ -2003,7 +2009,7 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
 
       return (
         <TabsValueContext.Provider value={value}>
-          <Tabs value={value} onValueChange={setValue}>
+          <Tabs value={value} onValueChange={setValue} className="w-full min-w-0">
             <div className="flex items-start gap-2">
               <TabsList className="min-w-0 flex-1 justify-start overflow-x-auto">
                 {tabs.map((tab) => (
@@ -2103,14 +2109,14 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
       // If a malformed spec places TabContent outside Tabs, render safely
       // instead of throwing from Radix context assertions.
       if (!activeValue) {
-        return <div>{children}</div>;
+        return <div className="w-full min-w-0">{children}</div>;
       }
 
       if (activeValue !== props.value) {
         return null;
       }
 
-      return <div>{children}</div>;
+      return <div className="w-full min-w-0">{children}</div>;
     },
 
     Pagination: ({ props, bindings, emit }) => {
@@ -2304,7 +2310,7 @@ export const { registry, handlers } = defineRegistry(explorerCatalog, {
       });
 
       return (
-        <div className="flex min-h-0 w-full flex-col">
+        <div className="flex min-h-0 w-full min-w-0 flex-col">
           {props.title && (
             <p className="text-sm font-medium mb-2">{props.title}</p>
           )}

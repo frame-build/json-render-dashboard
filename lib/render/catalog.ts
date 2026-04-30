@@ -56,6 +56,7 @@ export const explorerCatalog = defineCatalog(schema, {
     Accordion: shadcnComponentDefinitions.Accordion,
     Progress: shadcnComponentDefinitions.Progress,
     Skeleton: shadcnComponentDefinitions.Skeleton,
+    Spinner: shadcnComponentDefinitions.Spinner,
     Badge: shadcnComponentDefinitions.Badge,
     Alert: shadcnComponentDefinitions.Alert,
 
