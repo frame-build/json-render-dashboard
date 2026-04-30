@@ -683,13 +683,13 @@ export default function ChatPage() {
       <main ref={scrollContainerRef} className="flex-1 overflow-auto">
         {isEmpty ? (
           /* Empty state */
-          <div className="h-full flex flex-col items-center justify-center px-6 py-12">
-            <div className="max-w-2xl w-full space-y-8">
-              <div className="text-center space-y-2">
-                <h2 className="text-2xl font-semibold tracking-tight">
+          <div className="min-h-full flex flex-col items-center justify-center px-6 py-12">
+            <div className="max-w-4xl w-full space-y-10">
+              <div className="text-center space-y-3">
+                <h2 className="text-3xl font-semibold tracking-tight">
                   Which showcase dashboard should we build?
                 </h2>
-                <p className="text-muted-foreground">
+                <p className="mx-auto max-w-2xl text-base text-muted-foreground">
                   Ask for estimating and quantity dashboards on the Autodesk
                   showcase model. Every response is designed as a dashboard with
                   the 3D viewer, filters, charts, and tables inside the layout.
@@ -697,15 +697,15 @@ export default function ChatPage() {
               </div>
 
               {/* Suggestions */}
-              <div className="flex flex-wrap gap-2 justify-center">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 {SUGGESTIONS.map((s) => (
                   <button
                     key={s.label}
                     onClick={() => handleSubmit(s.prompt)}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-border text-sm text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
+                    className="group flex min-h-16 items-center gap-3 rounded-2xl border border-border/80 bg-card px-5 py-4 text-left text-base font-semibold text-foreground shadow-sm transition-colors hover:border-foreground/25 hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring dark:border-white/15 dark:bg-card dark:text-foreground dark:hover:border-white/35 dark:hover:bg-accent"
                   >
-                    <Sparkles className="h-3 w-3" />
-                    {s.label}
+                    <Sparkles className="h-4 w-4 flex-shrink-0 text-primary transition-transform group-hover:scale-110" />
+                    <span className="leading-tight">{s.label}</span>
                   </button>
                 ))}
               </div>
