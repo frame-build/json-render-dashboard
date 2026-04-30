@@ -60,6 +60,7 @@ export const queryShowcaseModel = tool({
     materials,
     activities,
     search,
+    rowLimit,
   }) => {
     return queryShowcaseTakeoff({
       kinds: kinds ?? undefined,
@@ -70,6 +71,7 @@ export const queryShowcaseModel = tool({
       materials: materials ?? undefined,
       activities: activities ?? undefined,
       search: search ?? undefined,
+      rowLimit: rowLimit ?? 20,
       groupLimit: 10,
       facetLimit: 100,
       maxDbIdsForIsolation: 200,

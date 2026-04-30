@@ -465,6 +465,7 @@ export async function assessPromptRefinement(
         "- Prompts that already specify dashboard intent plus meaningful analysis structure should generate.",
         "- Do not refine a prompt just because a filter label is generic or slightly different from the category guide when it already asks for viewer, filters, KPIs/metrics, charts, and a schedule/table.",
         "- When action is 'refine', provide 3 to 5 prompt options grounded in the showcase dataset.",
+        "- Every refine option prompt must explicitly request the fixed Autodesk showcase model, the Autodesk viewer, filters, KPIs/metrics, charts, and a table or schedule.",
         "- When action is 'irrelevant', do not suggest a dashboard UI. Just explain briefly that this app is for APS showcase dashboards.",
         "- Use category-specific filter language from the guide below instead of forcing generic Level or Material filters everywhere.",
         "- Treat Keyword search as the free-text search box, not as a structured BIM property.",
